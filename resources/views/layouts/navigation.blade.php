@@ -17,6 +17,21 @@
                             Dashboard
                         </x-nav-link>
                     </li>
+                    <li class="nav-item">
+                        <x-nav-link :href="route('lost-items.create')" :active="request()->routeIs('lost-items.create')">
+                            Report Lost
+                        </x-nav-link>
+                    </li>
+                    <li class="nav-item">
+                        <x-nav-link :href="route('found-items.create')" :active="request()->routeIs('found-items.create')">
+                            Report Found
+                        </x-nav-link>
+                    </li>
+                    <li class="nav-item">
+                        <x-nav-link :href="route('my-reports.index')" :active="request()->routeIs('my-reports.index')">
+                            My Reports
+                        </x-nav-link>
+                    </li>
 
                     @if (auth()->user()->isAdmin())
                         <li class="nav-item">
@@ -47,6 +62,8 @@
                             {{ auth()->user()->name }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                            <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf

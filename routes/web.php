@@ -16,4 +16,5 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     })->name('dashboard');
 });
 
+require __DIR__.'/items.php';
 require __DIR__.'/auth.php';
