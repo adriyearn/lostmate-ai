@@ -6,6 +6,7 @@ use App\Http\Controllers\FoundItemController;
 use App\Http\Controllers\LostItemController;
 use App\Http\Controllers\MyReportsController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
@@ -24,6 +25,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/lost-items/{lostItem}', [LostItemController::class, 'destroy'])->name('lost-items.destroy');
     Route::get('/lost-items/{lostItem}/matches', [LostItemController::class, 'matches'])->name('lost-items.matches');
     Route::post('/lost-items/{lostItem}/rerun-matching', [LostItemController::class, 'rerunMatching'])->name('lost-items.rerun-matching');
+    Route::post('/lost-items/{lostItem}/report', [ReportController::class, 'reportLostItem'])->name('lost-items.report');
 
     Route::get('/found-items/create', [FoundItemController::class, 'create'])->name('found-items.create');
     Route::post('/found-items', [FoundItemController::class, 'store'])->name('found-items.store');
@@ -33,6 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/found-items/{foundItem}', [FoundItemController::class, 'destroy'])->name('found-items.destroy');
     Route::get('/found-items/{foundItem}/matches', [FoundItemController::class, 'matches'])->name('found-items.matches');
     Route::post('/found-items/{foundItem}/rerun-matching', [FoundItemController::class, 'rerunMatching'])->name('found-items.rerun-matching');
+    Route::post('/found-items/{foundItem}/report', [ReportController::class, 'reportFoundItem'])->name('found-items.report');
 
     Route::post('/ai-matches/{aiMatch}/dismiss', [AiMatchController::class, 'dismiss'])->name('ai-matches.dismiss');
     Route::post('/ai-matches/{aiMatch}/start-conversation', [AiMatchController::class, 'startConversation'])->name('ai-matches.start-conversation');

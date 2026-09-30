@@ -9,13 +9,8 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('dashboard');
 
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
-});
-
 require __DIR__.'/items.php';
 require __DIR__.'/conversations.php';
 require __DIR__.'/claims.php';
+require __DIR__.'/admin.php';
 require __DIR__.'/auth.php';

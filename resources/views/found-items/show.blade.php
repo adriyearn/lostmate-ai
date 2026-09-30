@@ -2,7 +2,10 @@
     <x-slot name="header">
         <div class="d-flex justify-content-between align-items-center">
             <h1 class="h4 mb-0">{{ $foundItem->item_name }}</h1>
-            <x-status-badge :status="$foundItem->status" />
+            <div class="d-flex align-items-center gap-2">
+                <x-status-badge :status="$foundItem->status" />
+                <x-report-button :action="route('found-items.report', $foundItem)" id="reportFoundItemModal" />
+            </div>
         </div>
     </x-slot>
 
