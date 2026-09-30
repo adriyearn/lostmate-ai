@@ -23,22 +23,29 @@ class DatabaseSeeder extends Seeder
             'is_active' => true,
         ]);
 
-        User::forceCreate([
-            'name' => 'Juan Dela Cruz',
-            'email' => 'juan@lostmate.test',
-            'student_id' => '2021-00123',
-            'password' => Hash::make('password'),
-            'role' => UserRole::StudentStaff,
-            'is_active' => true,
-        ]);
+        $studentStaff = [
+            ['name' => 'Juan Dela Cruz', 'email' => 'juan@lostmate.test', 'student_id' => '2021-00123'],
+            ['name' => 'Maria Santos', 'email' => 'maria@lostmate.test', 'student_id' => '2021-00456'],
+            ['name' => 'Pedro Reyes', 'email' => 'pedro@lostmate.test', 'student_id' => '2021-00789'],
+            ['name' => 'Ana Garcia', 'email' => 'ana@lostmate.test', 'student_id' => '2022-00234'],
+            ['name' => 'Liza Mendoza', 'email' => 'liza@lostmate.test', 'student_id' => '2022-00567'],
+            ['name' => 'Carlo Ramos', 'email' => 'carlo@lostmate.test', 'student_id' => null],
+        ];
 
-        User::forceCreate([
-            'name' => 'Maria Santos',
-            'email' => 'maria@lostmate.test',
-            'student_id' => '2021-00456',
-            'password' => Hash::make('password'),
-            'role' => UserRole::StudentStaff,
-            'is_active' => true,
+        foreach ($studentStaff as $user) {
+            User::forceCreate([
+                'name' => $user['name'],
+                'email' => $user['email'],
+                'student_id' => $user['student_id'],
+                'password' => Hash::make('password'),
+                'role' => UserRole::StudentStaff,
+                'is_active' => true,
+            ]);
+        }
+
+        $this->call([
+            CategorySeeder::class,
+            LostFoundItemSeeder::class,
         ]);
     }
 }
