@@ -82,6 +82,15 @@
                 </a>
             @endcan
 
+            @if (auth()->id() !== $foundItem->user_id)
+                <form method="POST" action="{{ route('found-items.contact', $foundItem) }}" class="mb-2">
+                    @csrf
+                    <button type="submit" class="btn btn-primary w-100">
+                        This might be mine / Contact finder
+                    </button>
+                </form>
+            @endif
+
             @can('update', $foundItem)
                 <div class="d-flex gap-2 flex-wrap">
                     <a href="{{ route('found-items.edit', $foundItem) }}" class="btn btn-outline-secondary">Edit</a>

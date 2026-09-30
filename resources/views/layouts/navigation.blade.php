@@ -37,6 +37,15 @@
                             My Reports
                         </x-nav-link>
                     </li>
+                    <li class="nav-item">
+                        <x-nav-link :href="route('conversations.index')" :active="request()->routeIs('conversations.*')">
+                            Messages
+                            @php $unreadMessages = auth()->user()->unreadMessagesCount(); @endphp
+                            @if ($unreadMessages > 0)
+                                <span class="badge text-bg-danger rounded-pill">{{ $unreadMessages }}</span>
+                            @endif
+                        </x-nav-link>
+                    </li>
 
                     @if (auth()->user()->isAdmin())
                         <li class="nav-item">
@@ -61,6 +70,38 @@
                         </x-nav-link>
                     </li>
                 @else
+                    @php $unreadNotifications = auth()->user()->unreadNotifications; @endphp
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle position-relative" href="#" id="notificationsMenu" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            Notifications
+                            @if ($unreadNotifications->isNotEmpty())
+                                <span class="badge text-bg-danger rounded-pill">{{ $unreadNotifications->count() }}</span>
+                            @endif
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsMenu" style="min-width: 22rem;">
+                            @forelse ($unreadNotifications->take(5) as $notification)
+                                <li>
+                                    <a class="dropdown-item text-wrap small" href="{{ $notification->data['link'] ?? route('notifications.index') }}">
+                                        {{ $notification->data['message'] ?? 'Notification' }}
+                                    </a>
+                                </li>
+                            @empty
+                                <li><span class="dropdown-item-text small text-muted">No new notifications.</span></li>
+                            @endforelse
+                            <li><hr class="dropdown-divider"></li>
+                            @if ($unreadNotifications->isNotEmpty())
+                                <li>
+                                    <form method="POST" action="{{ route('notifications.mark-all-read') }}">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item small">Mark all as read</button>
+                                    </form>
+                                </li>
+                            @endif
+                            <li><a class="dropdown-item small" href="{{ route('notifications.index') }}">View all notifications</a></li>
+                        </ul>
+                    </li>
+
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">

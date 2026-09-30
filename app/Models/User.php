@@ -67,6 +67,19 @@ class User extends Authenticatable
         return $this->hasMany(Message::class, 'sender_id');
     }
 
+    public function conversations()
+    {
+        return Conversation::where('user_one_id', $this->id)->orWhere('user_two_id', $this->id);
+    }
+
+    public function unreadMessagesCount(): int
+    {
+        return Message::whereIn('conversation_id', $this->conversations()->pluck('id'))
+            ->where('sender_id', '!=', $this->id)
+            ->whereNull('read_at')
+            ->count();
+    }
+
     public function reportsFiled(): HasMany
     {
         return $this->hasMany(Report::class, 'reporter_id');

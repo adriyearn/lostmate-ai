@@ -69,6 +69,15 @@
                 </a>
             @endcan
 
+            @if (auth()->id() !== $lostItem->user_id)
+                <form method="POST" action="{{ route('lost-items.contact', $lostItem) }}" class="mb-2">
+                    @csrf
+                    <button type="submit" class="btn btn-primary w-100">
+                        I found this / Contact owner
+                    </button>
+                </form>
+            @endif
+
             @can('update', $lostItem)
                 <div class="d-flex gap-2 flex-wrap">
                     <a href="{{ route('lost-items.edit', $lostItem) }}" class="btn btn-outline-secondary">Edit</a>

@@ -28,18 +28,13 @@ class AiMatchController extends Controller
 
         $aiMatch->loadMissing(['lostItem.user', 'foundItem.user']);
 
-        $lostReporter = $aiMatch->lostItem->user;
-        $finder = $aiMatch->foundItem->user;
-
-        $conversation = Conversation::firstOrCreate([
-            'user_one_id' => $lostReporter->id,
-            'user_two_id' => $finder->id,
-            'lost_item_id' => $aiMatch->lost_item_id,
-            'found_item_id' => $aiMatch->found_item_id,
-        ], [
-            'ai_match_id' => $aiMatch->id,
-            'last_message_at' => now(),
-        ]);
+        $conversation = Conversation::findOrStartBetween(
+            $aiMatch->lostItem->user,
+            $aiMatch->foundItem->user,
+            lostItem: $aiMatch->lostItem,
+            foundItem: $aiMatch->foundItem,
+            aiMatch: $aiMatch,
+        );
 
         return redirect()->route('conversations.show', $conversation);
     }
