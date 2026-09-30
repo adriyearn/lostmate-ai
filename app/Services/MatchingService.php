@@ -95,9 +95,11 @@ class MatchingService
         }
 
         try {
+            $baseUrl = rtrim(config('services.openai.base_url'), '/');
+
             $response = Http::withToken($apiKey)
-                ->timeout(30)
-                ->post('https://api.openai.com/v1/chat/completions', [
+                ->timeout(60)
+                ->post("{$baseUrl}/chat/completions", [
                     'model' => config('services.openai.model'),
                     'temperature' => 0.2,
                     'response_format' => ['type' => 'json_object'],
@@ -108,13 +110,13 @@ class MatchingService
                 ]);
 
             if ($response->failed()) {
-                throw new RuntimeException('OpenAI request failed with status '.$response->status().': '.$response->body());
+                throw new RuntimeException('AI matching request failed with status '.$response->status().': '.$response->body());
             }
 
             $content = $response->json('choices.0.message.content');
-            $decoded = json_decode((string) $content, true);
+            $decoded = $this->extractJsonMatches($content);
 
-            if (! is_array($decoded) || ! isset($decoded['matches']) || ! is_array($decoded['matches'])) {
+            if ($decoded === null) {
                 Log::warning('MatchingService: AI response was not valid JSON in the expected shape.', [
                     'item_type' => $item::class,
                     'item_id' => $item->id,
@@ -124,7 +126,7 @@ class MatchingService
                 return null;
             }
 
-            return $decoded['matches'];
+            return $decoded;
         } catch (\Throwable $e) {
             // Re-throw so the queued job fails and Laravel's queue retries it;
             // the lost/found item itself was already saved before this ran.
@@ -138,6 +140,38 @@ class MatchingService
         }
     }
 
+    /**
+     * Parse the AI's response into a matches array. Smaller local models
+     * (e.g. via Ollama) don't always follow "JSON only" as strictly as
+     * GPT-family models - they sometimes wrap the JSON in a markdown code
+     * fence or add a stray sentence before/after it - so this tries a
+     * direct decode first, then falls back to extracting the first
+     * {...} block before giving up.
+     */
+    protected function extractJsonMatches(?string $content): ?array
+    {
+        if (! $content) {
+            return null;
+        }
+
+        $decoded = json_decode($content, true);
+
+        if (! is_array($decoded)) {
+            $stripped = preg_replace('/^```(?:json)?\s*|\s*```$/m', '', trim($content));
+            $decoded = json_decode(trim($stripped), true);
+        }
+
+        if (! is_array($decoded) && preg_match('/\{.*\}/s', $content, $matches)) {
+            $decoded = json_decode($matches[0], true);
+        }
+
+        if (! is_array($decoded) || ! isset($decoded['matches']) || ! is_array($decoded['matches'])) {
+            return null;
+        }
+
+        return $decoded['matches'];
+    }
+
     protected function systemPrompt(): string
     {
         return <<<'PROMPT'
@@ -149,6 +183,9 @@ class MatchingService
             score is an integer from 0 to 100. Only include candidates you think
             are plausible matches (score 50 or higher). If none are plausible,
             return {"matches": []}.
+            Output ONLY the JSON object above. Do not wrap it in a markdown code
+            fence, do not add any explanation before or after it, and do not
+            repeat these instructions.
             PROMPT;
     }
 

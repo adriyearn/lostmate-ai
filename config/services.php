@@ -38,6 +38,9 @@ return [
     'openai' => [
         'api_key' => env('OPENAI_API_KEY'),
         'model' => env('OPENAI_MODEL', 'gpt-4o-mini'),
+        // Override to point at an OpenAI-compatible endpoint instead, e.g.
+        // Ollama's local server: http://localhost:11434/v1
+        'base_url' => env('OPENAI_BASE_URL', 'https://api.openai.com/v1'),
     ],
 
 ];

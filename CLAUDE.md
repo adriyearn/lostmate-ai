@@ -13,7 +13,10 @@ easy for the student developers to explain during their defense.
 - Backend: PHP, Laravel (latest stable), MVC, Eloquent ORM
 - Frontend: Blade templates, Bootstrap 5, vanilla JavaScript (no React/Vue)
 - Database: MySQL, using migrations and seeders only (no raw SQL dumps)
-- AI: OpenAI API, called only from the backend
+- AI: OpenAI-compatible chat completions API, called only from the backend.
+  Talks to real OpenAI by default; can point at a local Ollama server
+  instead (free, no API costs) via OPENAI_BASE_URL - see "AI matching
+  rules" below.
 - Queue: Laravel database queue driver (QUEUE_CONNECTION=database)
 - Notifications: Laravel's built-in database notifications
 - Local dev: localhost (XAMPP or Laragon), Git/GitHub for version control
@@ -60,8 +63,16 @@ becomes returned.
   Save only matches with score >= 50 to ai_matches.
 - If the AI call fails or returns invalid JSON, the report still saves
   successfully. Log the error and allow a retry.
-- Config in .env only: OPENAI_API_KEY, OPENAI_MODEL. Never hardcode the key
-  or expose it to the frontend. Read it through config/services.php.
+- Config in .env only: OPENAI_API_KEY, OPENAI_MODEL, OPENAI_BASE_URL. Never
+  hardcode the key or expose it to the frontend. Read it through
+  config/services.php.
+- To run matching against a free local model instead of paid OpenAI
+  credits: install Ollama (ollama.com), `ollama pull llama3.2:3b`, then
+  set AI_MATCHING_FAKE=false, OPENAI_API_KEY to any placeholder value
+  (Ollama ignores it), OPENAI_MODEL=llama3.2:3b, and
+  OPENAI_BASE_URL=http://localhost:11434/v1. The Ollama service must be
+  running (it starts automatically on Windows after install/login, or run
+  `ollama serve`).
 - Put all AI code in app/Services/MatchingService.php.
 
 ## Security and privacy rules
