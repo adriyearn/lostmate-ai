@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BrowseController;
 use App\Http\Controllers\FoundItemController;
 use App\Http\Controllers\LostItemController;
 use App\Http\Controllers\MyReportsController;
@@ -9,6 +10,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    Route::get('/browse', [BrowseController::class, 'index'])->name('browse.index');
 
     Route::get('/my-reports', [MyReportsController::class, 'index'])->name('my-reports.index');
 

@@ -18,6 +18,11 @@
                         </x-nav-link>
                     </li>
                     <li class="nav-item">
+                        <x-nav-link :href="route('browse.index')" :active="request()->routeIs('browse.index')">
+                            Browse
+                        </x-nav-link>
+                    </li>
+                    <li class="nav-item">
                         <x-nav-link :href="route('lost-items.create')" :active="request()->routeIs('lost-items.create')">
                             Report Lost
                         </x-nav-link>
