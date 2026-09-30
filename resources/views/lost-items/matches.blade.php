@@ -38,9 +38,10 @@
                                     <button type="submit" class="btn btn-sm btn-primary">This might be mine / Contact finder</button>
                                 </form>
 
-                                <button type="button" class="btn btn-sm btn-outline-secondary" disabled title="Claim submission is added in a later phase">
+                                <a href="{{ route('claims.create', ['foundItem' => $match->foundItem, 'ai_match_id' => $match->id, 'lost_item_id' => $lostItem->id]) }}"
+                                   class="btn btn-sm btn-outline-primary">
                                     Submit claim
-                                </button>
+                                </a>
 
                                 <form method="POST" action="{{ route('ai-matches.dismiss', $match) }}"
                                       onsubmit="return confirm('Dismiss this match?');">

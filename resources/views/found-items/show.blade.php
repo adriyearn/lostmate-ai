@@ -89,9 +89,21 @@
                         This might be mine / Contact finder
                     </button>
                 </form>
+
+                @can('create', [App\Models\Claim::class, $foundItem])
+                    @if (in_array($foundItem->status, [App\Enums\ItemStatus::Open, App\Enums\ItemStatus::Matched], true))
+                        <a href="{{ route('claims.create', $foundItem) }}" class="btn btn-outline-primary w-100 mb-2">
+                            Claim this item
+                        </a>
+                    @endif
+                @endcan
             @endif
 
             @can('update', $foundItem)
+                <a href="{{ route('found-items.claims', $foundItem) }}" class="btn btn-info mb-2 w-100">
+                    View Claims ({{ $foundItem->claims()->count() }})
+                </a>
+
                 <div class="d-flex gap-2 flex-wrap">
                     <a href="{{ route('found-items.edit', $foundItem) }}" class="btn btn-outline-secondary">Edit</a>
                     <form method="POST" action="{{ route('found-items.destroy', $foundItem) }}"
@@ -100,6 +112,14 @@
                         @method('DELETE')
                         <x-danger-button>Delete</x-danger-button>
                     </form>
+
+                    @if ($foundItem->status === App\Enums\ItemStatus::Open)
+                        <form method="POST" action="{{ route('found-items.withdraw', $foundItem) }}"
+                              onsubmit="return confirm('Withdraw and close this report?');">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-secondary">Withdraw</button>
+                        </form>
+                    @endif
 
                     @can('rerunMatching', $foundItem)
                         <form method="POST" action="{{ route('found-items.rerun-matching', $foundItem) }}">

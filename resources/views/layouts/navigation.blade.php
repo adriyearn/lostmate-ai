@@ -38,6 +38,11 @@
                         </x-nav-link>
                     </li>
                     <li class="nav-item">
+                        <x-nav-link :href="route('my-claims.index')" :active="request()->routeIs('my-claims.index')">
+                            My Claims
+                        </x-nav-link>
+                    </li>
+                    <li class="nav-item">
                         <x-nav-link :href="route('conversations.index')" :active="request()->routeIs('conversations.*')">
                             Messages
                             @php $unreadMessages = auth()->user()->unreadMessagesCount(); @endphp

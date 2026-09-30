@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Enums\AiMatchStatus;
+use App\Enums\ItemStatus;
 use App\Http\Requests\StoreLostItemRequest;
 use App\Http\Requests\UpdateLostItemRequest;
 use App\Jobs\RunItemMatching;
 use App\Models\Category;
 use App\Models\LostItem;
 use App\Services\ItemImageService;
+use App\Services\ItemStatusService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -113,5 +115,23 @@ class LostItemController extends Controller
         RunItemMatching::dispatch($lostItem);
 
         return back()->with('success', 'Matching has been queued to run again for this item.');
+    }
+
+    public function withdraw(LostItem $lostItem, ItemStatusService $statusService): RedirectResponse
+    {
+        $this->authorize('update', $lostItem);
+
+        $statusService->transition($lostItem, ItemStatus::Closed);
+
+        return back()->with('success', 'This report has been withdrawn and closed.');
+    }
+
+    public function markReceived(LostItem $lostItem, ItemStatusService $statusService): RedirectResponse
+    {
+        $this->authorize('update', $lostItem);
+
+        $statusService->transition($lostItem, ItemStatus::Closed);
+
+        return back()->with('success', 'Glad you got it back! This report is now closed.');
     }
 }

@@ -78,6 +78,15 @@
                 </form>
             @endif
 
+            @if ($lostItem->status === App\Enums\ItemStatus::Returned && auth()->id() === $lostItem->user_id)
+                <form method="POST" action="{{ route('lost-items.received', $lostItem) }}" class="mb-2">
+                    @csrf
+                    <button type="submit" class="btn btn-success w-100">
+                        Received, close report
+                    </button>
+                </form>
+            @endif
+
             @can('update', $lostItem)
                 <div class="d-flex gap-2 flex-wrap">
                     <a href="{{ route('lost-items.edit', $lostItem) }}" class="btn btn-outline-secondary">Edit</a>
@@ -87,6 +96,14 @@
                         @method('DELETE')
                         <x-danger-button>Delete</x-danger-button>
                     </form>
+
+                    @if ($lostItem->status === App\Enums\ItemStatus::Open)
+                        <form method="POST" action="{{ route('lost-items.withdraw', $lostItem) }}"
+                              onsubmit="return confirm('Withdraw and close this report?');">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-secondary">Withdraw</button>
+                        </form>
+                    @endif
 
                     @can('rerunMatching', $lostItem)
                         <form method="POST" action="{{ route('lost-items.rerun-matching', $lostItem) }}">
