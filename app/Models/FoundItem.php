@@ -33,6 +33,15 @@ class FoundItem extends Model
         'closed_at',
     ];
 
+    /**
+     * Defense in depth: keeps hidden_details out of array/JSON
+     * serialization (e.g. toJson(), an accidental response()->json($item))
+     * even though nothing in the app currently serializes this model that
+     * way. Direct property/Blade access ({{ $foundItem->hidden_details }})
+     * is unaffected - authorization is still enforced by FoundItemPolicy.
+     */
+    protected $hidden = ['hidden_details'];
+
     protected function casts(): array
     {
         return [

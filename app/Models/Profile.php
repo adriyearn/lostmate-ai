@@ -17,6 +17,12 @@ class Profile extends Model
         'bio',
     ];
 
+    /**
+     * Defense in depth: contact_number is private (never shown publicly)
+     * per CLAUDE.md. Direct property/Blade access is unaffected.
+     */
+    protected $hidden = ['contact_number'];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
