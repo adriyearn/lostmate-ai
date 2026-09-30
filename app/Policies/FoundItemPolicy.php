@@ -44,4 +44,20 @@ class FoundItemPolicy
     {
         return $user->id === $foundItem->user_id;
     }
+
+    /**
+     * Only the reporter (or an admin, via before()) may view AI matches.
+     */
+    public function viewMatches(User $user, FoundItem $foundItem): bool
+    {
+        return $user->id === $foundItem->user_id;
+    }
+
+    /**
+     * Only admins (via before()) may manually re-run matching.
+     */
+    public function rerunMatching(User $user, FoundItem $foundItem): bool
+    {
+        return false;
+    }
 }

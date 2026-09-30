@@ -36,4 +36,20 @@ class LostItemPolicy
     {
         return $user->id === $lostItem->user_id;
     }
+
+    /**
+     * Only the reporter (or an admin, via before()) may view AI matches.
+     */
+    public function viewMatches(User $user, LostItem $lostItem): bool
+    {
+        return $user->id === $lostItem->user_id;
+    }
+
+    /**
+     * Only admins (via before()) may manually re-run matching.
+     */
+    public function rerunMatching(User $user, LostItem $lostItem): bool
+    {
+        return false;
+    }
 }

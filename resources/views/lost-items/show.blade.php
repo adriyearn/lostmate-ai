@@ -63,8 +63,14 @@
                 </div>
             </div>
 
+            @can('viewMatches', $lostItem)
+                <a href="{{ route('lost-items.matches', $lostItem) }}" class="btn btn-info mb-2 w-100">
+                    View Possible Matches
+                </a>
+            @endcan
+
             @can('update', $lostItem)
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2 flex-wrap">
                     <a href="{{ route('lost-items.edit', $lostItem) }}" class="btn btn-outline-secondary">Edit</a>
                     <form method="POST" action="{{ route('lost-items.destroy', $lostItem) }}"
                           onsubmit="return confirm('Delete this lost item report? This cannot be undone.');">
@@ -72,6 +78,13 @@
                         @method('DELETE')
                         <x-danger-button>Delete</x-danger-button>
                     </form>
+
+                    @can('rerunMatching', $lostItem)
+                        <form method="POST" action="{{ route('lost-items.rerun-matching', $lostItem) }}">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-primary">Re-run Matching</button>
+                        </form>
+                    @endcan
                 </div>
             @endcan
         </div>

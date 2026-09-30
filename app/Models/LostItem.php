@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\ItemStatus;
+use App\Observers\LostItemObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[ObservedBy(LostItemObserver::class)]
 class LostItem extends Model
 {
     use HasFactory, SoftDeletes;

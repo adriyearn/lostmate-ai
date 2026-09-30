@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\AiMatchStatus;
 use App\Http\Requests\StoreLostItemRequest;
 use App\Http\Requests\UpdateLostItemRequest;
+use App\Jobs\RunItemMatching;
 use App\Models\Category;
 use App\Models\LostItem;
 use App\Services\ItemImageService;
@@ -86,5 +88,30 @@ class LostItemController extends Controller
         return redirect()
             ->route('my-reports.index')
             ->with('success', 'Your lost item report has been deleted.');
+    }
+
+    public function matches(LostItem $lostItem): View
+    {
+        $this->authorize('viewMatches', $lostItem);
+
+        $matches = $lostItem->aiMatches()
+            ->where('status', '!=', AiMatchStatus::Dismissed)
+            ->with(['foundItem.category', 'foundItem.images'])
+            ->orderByDesc('score')
+            ->get();
+
+        return view('lost-items.matches', [
+            'lostItem' => $lostItem,
+            'matches' => $matches,
+        ]);
+    }
+
+    public function rerunMatching(LostItem $lostItem): RedirectResponse
+    {
+        $this->authorize('rerunMatching', $lostItem);
+
+        RunItemMatching::dispatch($lostItem);
+
+        return back()->with('success', 'Matching has been queued to run again for this item.');
     }
 }
