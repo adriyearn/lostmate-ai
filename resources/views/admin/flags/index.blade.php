@@ -15,34 +15,38 @@
         </div>
     </form>
 
-    <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>Reason</th>
-                    <th>Reporter</th>
-                    <th>Status</th>
-                    <th>Reported</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($reports as $report)
+    @if ($reports->isEmpty())
+        <p class="text-muted">No flagged content{{ $status ? ' with this status' : '' }}. Nice and quiet.</p>
+    @else
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
                     <tr>
-                        <td>{{ class_basename($report->reportable_type) }}</td>
-                        <td>{{ $report->reason->label() }}</td>
-                        <td>{{ $report->reporter->name }}</td>
-                        <td><span class="badge {{ $report->status->badgeClass() }}">{{ $report->status->label() }}</span></td>
-                        <td>{{ $report->created_at->format('M j, Y') }}</td>
-                        <td class="text-end">
-                            <a href="{{ route('admin.flags.show', $report) }}" class="btn btn-sm btn-outline-secondary">Review</a>
-                        </td>
+                        <th>Type</th>
+                        <th>Reason</th>
+                        <th>Reporter</th>
+                        <th>Status</th>
+                        <th>Reported</th>
+                        <th></th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach ($reports as $report)
+                        <tr>
+                            <td>{{ class_basename($report->reportable_type) }}</td>
+                            <td>{{ $report->reason->label() }}</td>
+                            <td>{{ $report->reporter->name }}</td>
+                            <td><span class="badge {{ $report->status->badgeClass() }}">{{ $report->status->label() }}</span></td>
+                            <td>{{ $report->created_at->format('M j, Y') }}</td>
+                            <td class="text-end">
+                                <a href="{{ route('admin.flags.show', $report) }}" class="btn btn-sm btn-outline-secondary">Review</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
 
-    {{ $reports->links() }}
+        {{ $reports->links() }}
+    @endif
 </x-admin-layout>

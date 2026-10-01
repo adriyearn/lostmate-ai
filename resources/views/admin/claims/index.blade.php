@@ -15,32 +15,36 @@
         </div>
     </form>
 
-    <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead>
-                <tr>
-                    <th>Found Item</th>
-                    <th>Claimant</th>
-                    <th>Status</th>
-                    <th>Submitted</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($claims as $claim)
+    @if ($claims->isEmpty())
+        <p class="text-muted">No claims match these filters.</p>
+    @else
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
                     <tr>
-                        <td>{{ $claim->foundItem->item_name }}</td>
-                        <td>{{ $claim->claimant->name }}</td>
-                        <td><span class="badge {{ $claim->status->badgeClass() }}">{{ $claim->status->label() }}</span></td>
-                        <td>{{ $claim->created_at->format('M j, Y') }}</td>
-                        <td class="text-end">
-                            <a href="{{ route('admin.claims.show', $claim) }}" class="btn btn-sm btn-outline-secondary">View</a>
-                        </td>
+                        <th>Found Item</th>
+                        <th>Claimant</th>
+                        <th>Status</th>
+                        <th>Submitted</th>
+                        <th></th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach ($claims as $claim)
+                        <tr>
+                            <td>{{ $claim->foundItem->item_name }}</td>
+                            <td>{{ $claim->claimant->name }}</td>
+                            <td><span class="badge {{ $claim->status->badgeClass() }}">{{ $claim->status->label() }}</span></td>
+                            <td>{{ $claim->created_at->format('M j, Y') }}</td>
+                            <td class="text-end">
+                                <a href="{{ route('admin.claims.show', $claim) }}" class="btn btn-sm btn-outline-secondary">View</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
 
-    {{ $claims->links() }}
+        {{ $claims->links() }}
+    @endif
 </x-admin-layout>

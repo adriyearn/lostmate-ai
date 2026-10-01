@@ -31,32 +31,36 @@
         </div>
     </form>
 
-    <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead>
-                <tr>
-                    <th>Admin</th>
-                    <th>Action</th>
-                    <th>Target</th>
-                    <th>Description</th>
-                    <th>IP</th>
-                    <th>When</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($logs as $log)
+    @if ($logs->isEmpty())
+        <p class="text-muted">No admin actions match these filters.</p>
+    @else
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
                     <tr>
-                        <td>{{ $log->admin->name }}</td>
-                        <td><code class="small">{{ $log->action }}</code></td>
-                        <td class="small text-muted">{{ $log->target_type ? class_basename($log->target_type).' #'.$log->target_id : '—' }}</td>
-                        <td class="small">{{ $log->description ?? '—' }}</td>
-                        <td class="small text-muted">{{ $log->ip_address ?? '—' }}</td>
-                        <td class="small text-muted">{{ $log->created_at->format('M j, Y g:i A') }}</td>
+                        <th>Admin</th>
+                        <th>Action</th>
+                        <th>Target</th>
+                        <th>Description</th>
+                        <th>IP</th>
+                        <th>When</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach ($logs as $log)
+                        <tr>
+                            <td>{{ $log->admin->name }}</td>
+                            <td><code class="small">{{ $log->action }}</code></td>
+                            <td class="small text-muted">{{ $log->target_type ? class_basename($log->target_type).' #'.$log->target_id : '—' }}</td>
+                            <td class="small">{{ $log->description ?? '—' }}</td>
+                            <td class="small text-muted">{{ $log->ip_address ?? '—' }}</td>
+                            <td class="small text-muted">{{ $log->created_at->format('M j, Y g:i A') }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
 
-    {{ $logs->links() }}
+        {{ $logs->links() }}
+    @endif
 </x-admin-layout>

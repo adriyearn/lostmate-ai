@@ -35,38 +35,42 @@
         </div>
     </form>
 
-    <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Category</th>
-                    <th>Reporter</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($items as $item)
+    @if ($items->isEmpty())
+        <p class="text-muted">No {{ $tab }} reports match these filters.</p>
+    @else
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
                     <tr>
-                        <td>
-                            <a href="{{ route($tab === 'lost' ? 'admin.reports.show-lost' : 'admin.reports.show-found', $item) }}">
-                                {{ $item->item_name }}
-                            </a>
-                        </td>
-                        <td>{{ $item->category->name }}</td>
-                        <td>{{ $item->user->name }}</td>
-                        <td><x-status-badge :status="$item->status" /></td>
-                        <td>{{ ($tab === 'lost' ? $item->date_lost : $item->date_found)->format('M j, Y') }}</td>
-                        <td class="text-end">
-                            <a href="{{ route($tab === 'lost' ? 'admin.reports.show-lost' : 'admin.reports.show-found', $item) }}" class="btn btn-sm btn-outline-secondary">View</a>
-                        </td>
+                        <th>Item</th>
+                        <th>Category</th>
+                        <th>Reporter</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th></th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach ($items as $item)
+                        <tr>
+                            <td>
+                                <a href="{{ route($tab === 'lost' ? 'admin.reports.show-lost' : 'admin.reports.show-found', $item) }}">
+                                    {{ $item->item_name }}
+                                </a>
+                            </td>
+                            <td>{{ $item->category->name }}</td>
+                            <td>{{ $item->user->name }}</td>
+                            <td><x-status-badge :status="$item->status" /></td>
+                            <td>{{ ($tab === 'lost' ? $item->date_lost : $item->date_found)->format('M j, Y') }}</td>
+                            <td class="text-end">
+                                <a href="{{ route($tab === 'lost' ? 'admin.reports.show-lost' : 'admin.reports.show-found', $item) }}" class="btn btn-sm btn-outline-secondary">View</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
 
-    {{ $items->links() }}
+        {{ $items->links() }}
+    @endif
 </x-admin-layout>
