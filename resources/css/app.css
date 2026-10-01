@@ -1,1 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import 'bootstrap/dist/css/bootstrap.min.css';
+
+/*
+ * Minimalist theme layer - overrides Bootstrap 5.3's CSS variables rather
+ * than fighting its component classes, so every badge/button/alert across
+ * the app stays consistent from this one file. Keeps the Bootstrap grid
+ * and utility classes exactly as-is (nothing else in the app needs to
+ * change), just restrains the default palette and visual weight.
+ */
+:root {
+    --bs-font-sans-serif: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --bs-body-color: #1f2328;
+    --bs-body-bg: #fafafa;
+    --bs-secondary-color: #6b7280;
+    --bs-border-color: #e5e7eb;
+    --bs-border-radius: 0.5rem;
+    --bs-border-radius-sm: 0.375rem;
+    --bs-border-radius-lg: 0.625rem;
+
+    --bs-primary: #2563eb;
+    --bs-primary-rgb: 37, 99, 235;
+    --bs-link-color: var(--bs-primary);
+    --bs-link-hover-color: #1d4ed8;
+
+    --bs-success: #16a34a;
+    --bs-success-rgb: 22, 163, 74;
+    --bs-danger: #dc2626;
+    --bs-danger-rgb: 220, 38, 38;
+    --bs-warning: #d97706;
+    --bs-warning-rgb: 217, 119, 6;
+    --bs-info: #0891b2;
+    --bs-info-rgb: 8, 145, 178;
+    --bs-secondary: #6b7280;
+    --bs-secondary-rgb: 107, 114, 128;
+}
+
+body {
+    letter-spacing: -0.01em;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+/* Flatter surfaces: a hairline border reads calmer than a drop shadow */
+.card {
+    box-shadow: none;
+    border-color: var(--bs-border-color);
+}
+
+.shadow-sm {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Light, bordered navbar instead of a solid dark bar */
+.navbar {
+    background-color: #fff;
+    border-bottom: 1px solid var(--bs-border-color);
+    box-shadow: none;
+    --bs-navbar-color: #374151;
+    --bs-navbar-hover-color: #111827;
+    --bs-navbar-active-color: #111827;
+    --bs-navbar-brand-color: #111827;
+    --bs-navbar-brand-hover-color: #111827;
+}
+
+.navbar .nav-link.active {
+    font-weight: 600;
+}
+
+.navbar .badge {
+    font-weight: 500;
+}
+
+/* Softer, less saturated badges */
+.badge {
+    font-weight: 500;
+    letter-spacing: 0;
+}
+
+.btn {
+    font-weight: 500;
+    box-shadow: none;
+}
+
+.btn-primary {
+    --bs-btn-border-color: var(--bs-primary);
+    --bs-btn-hover-bg: #1d4ed8;
+    --bs-btn-hover-border-color: #1d4ed8;
+    --bs-btn-active-bg: #1d4ed8;
+    --bs-btn-active-border-color: #1d4ed8;
+}
+
+.table {
+    --bs-table-hover-bg: #f9fafb;
+}
+
+.alert {
+    border: 1px solid transparent;
+    box-shadow: none;
+}
+
+.dropdown-menu {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border-color: var(--bs-border-color);
+}
+
+.form-control, .form-select {
+    box-shadow: none;
+}
+
+.form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}

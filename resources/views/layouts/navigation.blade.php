@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
     <div class="container">
         <a class="navbar-brand fw-semibold" href="{{ auth()->check() ? route('dashboard') : route('login') }}">
             LostMate AI
