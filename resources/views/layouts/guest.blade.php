@@ -13,13 +13,32 @@
         @include('layouts.navigation')
 
         <div class="lm-auth">
-            <div class="card">
-                <div class="card-body">
+            <aside class="lm-auth-brand">
+                <div>
+                    <span class="badge rounded-pill" style="background: rgba(255,255,255,.18); color: #fff;">
+                        <i class="bi bi-stars"></i> AI-powered lost &amp; found
+                    </span>
+                </div>
+
+                <div>
+                    <h2 class="mb-3">Lost something on campus?<br>Let's bring it back.</h2>
+                    <p class="mb-4">Report lost or found items, and our AI suggests likely matches so you can reunite things with their owners faster.</p>
+
+                    <div class="lm-auth-feature"><i class="bi bi-cpu"></i> AI suggests possible matches automatically</div>
+                    <div class="lm-auth-feature"><i class="bi bi-shield-check"></i> Private details verify real owners</div>
+                    <div class="lm-auth-feature"><i class="bi bi-chat-heart"></i> Message finders without sharing contacts</div>
+                </div>
+
+                <p class="small mb-0" style="opacity:.75;">&copy; {{ date('Y') }} LostMate AI</p>
+            </aside>
+
+            <main class="lm-auth-form">
+                <div class="lm-auth-card lm-fade-in">
                     <x-flash-messages />
 
                     {{ $slot }}
                 </div>
-            </div>
+            </main>
         </div>
     </body>
 </html>

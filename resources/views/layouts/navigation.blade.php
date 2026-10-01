@@ -1,8 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
     <div class="container">
         <a class="navbar-brand" href="{{ auth()->check() ? route('dashboard') : route('login') }}">
-            <span class="lm-logo">L</span>
-            LostMate
+            <span class="lm-logo"><i class="bi bi-search-heart"></i></span>
+            <span>LostMate <span class="lm-gradient-text">AI</span></span>
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
@@ -11,115 +11,144 @@
         </button>
 
         <div class="collapse navbar-collapse" id="mainNavbar">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <ul class="navbar-nav mx-lg-auto mb-2 mb-lg-0 gap-lg-1">
                 @auth
                     <li class="nav-item">
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                            Dashboard
+                            <i class="bi bi-grid-1x2"></i> Dashboard
                         </x-nav-link>
                     </li>
                     <li class="nav-item">
                         <x-nav-link :href="route('browse.index')" :active="request()->routeIs('browse.index')">
-                            Browse
-                        </x-nav-link>
-                    </li>
-                    <li class="nav-item">
-                        <x-nav-link :href="route('lost-items.create')" :active="request()->routeIs('lost-items.create')">
-                            Report Lost
-                        </x-nav-link>
-                    </li>
-                    <li class="nav-item">
-                        <x-nav-link :href="route('found-items.create')" :active="request()->routeIs('found-items.create')">
-                            Report Found
+                            <i class="bi bi-compass"></i> Browse
                         </x-nav-link>
                     </li>
                     <li class="nav-item">
                         <x-nav-link :href="route('my-reports.index')" :active="request()->routeIs('my-reports.index')">
-                            My Reports
+                            <i class="bi bi-folder2-open"></i> My Reports
                         </x-nav-link>
                     </li>
                     <li class="nav-item">
                         <x-nav-link :href="route('my-claims.index')" :active="request()->routeIs('my-claims.index')">
-                            My Claims
-                        </x-nav-link>
-                    </li>
-                    <li class="nav-item">
-                        <x-nav-link :href="route('conversations.index')" :active="request()->routeIs('conversations.*')">
-                            Messages
-                            @php $unreadMessages = auth()->user()->unreadMessagesCount(); @endphp
-                            @if ($unreadMessages > 0)
-                                <span class="badge text-bg-danger rounded-pill">{{ $unreadMessages }}</span>
-                            @endif
+                            <i class="bi bi-patch-check"></i> My Claims
                         </x-nav-link>
                     </li>
 
                     @if (auth()->user()->isAdmin())
                         <li class="nav-item">
                             <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
-                                Admin
+                                <i class="bi bi-shield-lock"></i> Admin
                             </x-nav-link>
                         </li>
                     @endif
                 @endauth
             </ul>
 
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-1">
                 @guest
                     <li class="nav-item">
                         <x-nav-link :href="route('login')" :active="request()->routeIs('login')">
-                            Login
+                            Log in
                         </x-nav-link>
                     </li>
                     <li class="nav-item">
-                        <x-nav-link :href="route('register')" :active="request()->routeIs('register')">
-                            Register
-                        </x-nav-link>
+                        <a class="btn btn-primary btn-sm ms-lg-1" href="{{ route('register') }}">Get started</a>
                     </li>
                 @else
+                    <li class="nav-item dropdown d-none d-lg-block">
+                        <a class="btn btn-primary btn-sm me-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-plus-lg"></i> Report
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="{{ route('lost-items.create') }}">
+                                    <i class="bi bi-exclamation-circle text-danger"></i> I lost something
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('found-items.create') }}">
+                                    <i class="bi bi-box-seam text-success"></i> I found something
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item d-lg-none">
+                        <x-nav-link :href="route('lost-items.create')" :active="request()->routeIs('lost-items.create')">
+                            <i class="bi bi-exclamation-circle"></i> Report Lost
+                        </x-nav-link>
+                    </li>
+                    <li class="nav-item d-lg-none">
+                        <x-nav-link :href="route('found-items.create')" :active="request()->routeIs('found-items.create')">
+                            <i class="bi bi-box-seam"></i> Report Found
+                        </x-nav-link>
+                    </li>
+
+                    <li class="nav-item">
+                        @php $unreadMessages = auth()->user()->unreadMessagesCount(); @endphp
+                        <a class="nav-link lm-icon-btn {{ request()->routeIs('conversations.*') ? 'active' : '' }}"
+                           href="{{ route('conversations.index') }}" title="Messages">
+                            <i class="bi bi-chat-dots"></i>
+                            <span class="d-lg-none ms-2">Messages</span>
+                            @if ($unreadMessages > 0)
+                                <span class="lm-dot">{{ $unreadMessages }}</span>
+                            @endif
+                        </a>
+                    </li>
+
                     @php $unreadNotifications = auth()->user()->unreadNotifications; @endphp
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle position-relative" href="#" id="notificationsMenu" role="button"
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                            Notifications
+                        <a class="nav-link lm-icon-btn" href="#" id="notificationsMenu" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false" title="Notifications">
+                            <i class="bi bi-bell"></i>
+                            <span class="d-lg-none ms-2">Notifications</span>
                             @if ($unreadNotifications->isNotEmpty())
-                                <span class="badge text-bg-danger rounded-pill">{{ $unreadNotifications->count() }}</span>
+                                <span class="lm-dot">{{ $unreadNotifications->count() }}</span>
                             @endif
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsMenu" style="min-width: 22rem;">
+                            <li><h6 class="dropdown-header">Notifications</h6></li>
                             @forelse ($unreadNotifications->take(5) as $notification)
                                 <li>
-                                    <a class="dropdown-item text-wrap small" href="{{ $notification->data['link'] ?? route('notifications.index') }}">
-                                        {{ $notification->data['message'] ?? 'Notification' }}
+                                    <a class="dropdown-item text-wrap small align-items-start" href="{{ $notification->data['link'] ?? route('notifications.index') }}">
+                                        <i class="bi bi-dot fs-4 text-primary lh-1"></i>
+                                        <span>{{ $notification->data['message'] ?? 'Notification' }}</span>
                                     </a>
                                 </li>
                             @empty
-                                <li><span class="dropdown-item-text small text-muted">No new notifications.</span></li>
+                                <li><span class="dropdown-item-text small text-muted">You're all caught up.</span></li>
                             @endforelse
                             <li><hr class="dropdown-divider"></li>
                             @if ($unreadNotifications->isNotEmpty())
                                 <li>
                                     <form method="POST" action="{{ route('notifications.mark-all-read') }}">
                                         @csrf
-                                        <button type="submit" class="dropdown-item small">Mark all as read</button>
+                                        <button type="submit" class="dropdown-item small"><i class="bi bi-check2-all"></i> Mark all as read</button>
                                     </form>
                                 </li>
                             @endif
-                            <li><a class="dropdown-item small" href="{{ route('notifications.index') }}">View all notifications</a></li>
+                            <li><a class="dropdown-item small" href="{{ route('notifications.index') }}"><i class="bi bi-list-ul"></i> View all notifications</a></li>
                         </ul>
                     </li>
 
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button"
+                        <a class="nav-link d-flex align-items-center gap-2" href="#" id="userMenu" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
-                            {{ auth()->user()->name }}
+                            <span class="lm-avatar">{{ auth()->user()->initials() }}</span>
+                            <span class="d-lg-none">{{ auth()->user()->name }}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                            <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profile</a></li>
+                            <li class="px-3 py-2">
+                                <div class="fw-bold text-dark small">{{ auth()->user()->name }}</div>
+                                <div class="text-muted" style="font-size: 0.75rem;">{{ auth()->user()->role->label() }}</div>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="bi bi-person"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="{{ route('notifications.index') }}"><i class="bi bi-bell"></i> Notifications</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <button type="submit" class="dropdown-item">Log Out</button>
+                                    <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i> Log Out</button>
                                 </form>
                             </li>
                         </ul>

@@ -1,24 +1,30 @@
 <x-admin-layout>
     <x-slot name="header">
-        <h1 class="h4 mb-0">Admin Dashboard</h1>
+        <div>
+            <h1 class="h3 mb-1">Admin dashboard</h1>
+            <p class="text-muted mb-0">An overview of activity across LostMate AI.</p>
+        </div>
     </x-slot>
 
-    <div class="row row-cols-2 row-cols-md-4 g-3 mb-4">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 mb-4">
         @foreach ([
-            ['label' => 'Users', 'value' => $stats['users']],
-            ['label' => 'Lost Items', 'value' => $stats['lostItems']],
-            ['label' => 'Found Items', 'value' => $stats['foundItems']],
-            ['label' => 'Open Reports', 'value' => $stats['openReports']],
-            ['label' => 'Returned Items', 'value' => $stats['returnedItems']],
-            ['label' => 'Pending Claims', 'value' => $stats['pendingClaims']],
-            ['label' => 'Pending Flags', 'value' => $stats['pendingFlags']],
-            ['label' => 'Recovery Rate', 'value' => $stats['recoveryRate'].'%'],
+            ['label' => 'Users', 'value' => $stats['users'], 'icon' => 'bi-people', 'tone' => 'lm-tone-indigo'],
+            ['label' => 'Lost items', 'value' => $stats['lostItems'], 'icon' => 'bi-exclamation-circle', 'tone' => 'lm-tone-red'],
+            ['label' => 'Found items', 'value' => $stats['foundItems'], 'icon' => 'bi-box-seam', 'tone' => 'lm-tone-green'],
+            ['label' => 'Open reports', 'value' => $stats['openReports'], 'icon' => 'bi-folder2-open', 'tone' => 'lm-tone-sky'],
+            ['label' => 'Returned items', 'value' => $stats['returnedItems'], 'icon' => 'bi-arrow-return-left', 'tone' => 'lm-tone-violet'],
+            ['label' => 'Pending claims', 'value' => $stats['pendingClaims'], 'icon' => 'bi-patch-question', 'tone' => 'lm-tone-amber'],
+            ['label' => 'Pending flags', 'value' => $stats['pendingFlags'], 'icon' => 'bi-flag', 'tone' => 'lm-tone-pink'],
+            ['label' => 'Recovery rate', 'value' => $stats['recoveryRate'].'%', 'icon' => 'bi-graph-up-arrow', 'tone' => 'lm-tone-slate'],
         ] as $card)
             <div class="col">
                 <div class="card h-100">
-                    <div class="card-body">
-                        <div class="lm-section-title mb-2">{{ $card['label'] }}</div>
-                        <div class="lm-stat">{{ $card['value'] }}</div>
+                    <div class="lm-stat-card">
+                        <span class="lm-stat-icon {{ $card['tone'] }}"><i class="bi {{ $card['icon'] }}"></i></span>
+                        <div>
+                            <div class="lm-stat">{{ $card['value'] }}</div>
+                            <div class="lm-stat-label">{{ $card['label'] }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -27,7 +33,7 @@
 
     <div class="card">
         <div class="card-body">
-            <h2 class="h6">Reports per Month</h2>
+            <h2 class="lm-section-title mb-3"><i class="bi bi-bar-chart"></i> Reports per month</h2>
             <canvas id="reportsChart" height="90"></canvas>
         </div>
     </div>
@@ -46,12 +52,12 @@
                         {
                             label: 'Lost',
                             data: @json($chartData['lost']),
-                            backgroundColor: '#111111', borderRadius: 6,
+                            backgroundColor: '#6366f1', borderRadius: 8,
                         },
                         {
                             label: 'Found',
                             data: @json($chartData['found']),
-                            backgroundColor: '#c7c7cc', borderRadius: 6,
+                            backgroundColor: '#c4b5fd', borderRadius: 8,
                         },
                     ],
                 },

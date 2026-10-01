@@ -59,7 +59,7 @@ class DashboardMatchesTest extends TestCase
         // Both found items still appear under "Recently found"; what matters
         // is that the matches section has nothing for this user.
         $response->assertOk();
-        $response->assertSee('No possible matches yet.');
+        $response->assertSee('No possible matches yet');
         $response->assertDontSee('may match:');
     }
 

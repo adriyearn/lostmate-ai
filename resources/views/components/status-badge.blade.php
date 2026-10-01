@@ -1,5 +1,5 @@
 @props(['status'])
 
-<span {{ $attributes->merge(['class' => 'badge ' . $status->badgeClass()]) }}>
+<span {{ $attributes->merge(['class' => 'badge lm-status ' . $status->badgeClass()]) }}>
     {{ $status->label() }}
 </span>

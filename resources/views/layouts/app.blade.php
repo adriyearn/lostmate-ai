@@ -20,13 +20,20 @@
             </header>
         @endisset
 
-        <main class="py-4 pb-5">
-            <div class="container">
+        <main class="py-4">
+            <div class="container lm-fade-in">
                 <x-flash-messages />
 
                 {{ $slot }}
             </div>
         </main>
+
+        <footer class="lm-footer">
+            <div class="container d-flex flex-wrap justify-content-between gap-2">
+                <span>&copy; {{ date('Y') }} LostMate AI &middot; Campus lost &amp; found</span>
+                <span><i class="bi bi-stars"></i> AI matches are suggestions &mdash; always verify ownership.</span>
+            </div>
+        </footer>
 
         @stack('scripts')
     </body>

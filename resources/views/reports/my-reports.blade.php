@@ -1,20 +1,24 @@
 <x-app-layout>
     <x-slot name="header">
-        <h1 class="h4 mb-0">My Reports</h1>
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3">
+            <div>
+                <h1>My reports</h1>
+                <p class="text-muted mb-0 mt-1">Track your reports, AI matches, and incoming claims in one place.</p>
+            </div>
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link {{ $tab === 'lost' ? 'active' : '' }}" href="{{ route('my-reports.index', ['tab' => 'lost']) }}">
+                        <i class="bi bi-exclamation-circle"></i> Lost ({{ $lostItems->total() }})
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ $tab === 'found' ? 'active' : '' }}" href="{{ route('my-reports.index', ['tab' => 'found']) }}">
+                        <i class="bi bi-box-seam"></i> Found ({{ $foundItems->total() }})
+                    </a>
+                </li>
+            </ul>
+        </div>
     </x-slot>
-
-    <ul class="nav nav-tabs mb-3">
-        <li class="nav-item">
-            <a class="nav-link {{ $tab === 'lost' ? 'active' : '' }}" href="{{ route('my-reports.index', ['tab' => 'lost']) }}">
-                Lost ({{ $lostItems->total() }})
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ $tab === 'found' ? 'active' : '' }}" href="{{ route('my-reports.index', ['tab' => 'found']) }}">
-                Found ({{ $foundItems->total() }})
-            </a>
-        </li>
-    </ul>
 
     @if ($tab === 'found')
         @if ($foundItems->isEmpty())
@@ -30,23 +34,23 @@
                         </div>
                         <div class="d-flex gap-2 align-items-center">
                             <a href="{{ route('found-items.matches', $item) }}" class="btn btn-sm btn-outline-secondary">
-                                Matches
+                                <i class="bi bi-stars"></i> Matches
                                 @if ($item->suggested_matches_count > 0)
                                     <span class="badge text-bg-primary">{{ $item->suggested_matches_count }}</span>
                                 @endif
                             </a>
                             <a href="{{ route('found-items.claims', $item) }}" class="btn btn-sm {{ $item->pending_claims_count > 0 ? 'btn-warning' : 'btn-outline-secondary' }}">
-                                Claims
+                                <i class="bi bi-inboxes"></i> Claims
                                 @if ($item->pending_claims_count > 0)
                                     <span class="badge text-bg-dark">{{ $item->pending_claims_count }}</span>
                                 @endif
                             </a>
-                            <a href="{{ route('found-items.edit', $item) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            <a href="{{ route('found-items.edit', $item) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i> Edit</a>
                             <form method="POST" action="{{ route('found-items.destroy', $item) }}"
                                   onsubmit="return confirm('Delete this found item report? This cannot be undone.');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete" aria-label="Delete"><i class="bi bi-trash"></i></button>
                             </form>
                         </div>
                     </div>
@@ -68,17 +72,17 @@
                         </div>
                         <div class="d-flex gap-2 align-items-center">
                             <a href="{{ route('lost-items.matches', $item) }}" class="btn btn-sm btn-outline-secondary">
-                                Matches
+                                <i class="bi bi-stars"></i> Matches
                                 @if ($item->suggested_matches_count > 0)
                                     <span class="badge text-bg-primary">{{ $item->suggested_matches_count }}</span>
                                 @endif
                             </a>
-                            <a href="{{ route('lost-items.edit', $item) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            <a href="{{ route('lost-items.edit', $item) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i> Edit</a>
                             <form method="POST" action="{{ route('lost-items.destroy', $item) }}"
                                   onsubmit="return confirm('Delete this lost item report? This cannot be undone.');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete" aria-label="Delete"><i class="bi bi-trash"></i></button>
                             </form>
                         </div>
                     </div>
