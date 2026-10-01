@@ -25,6 +25,8 @@ class MatchingService
         $candidates = $this->findCandidates($item);
 
         if ($candidates->isEmpty()) {
+            $this->pruneStaleSuggestions($item, $candidates, []);
+
             return;
         }
 
@@ -32,11 +34,41 @@ class MatchingService
             ? $this->fakeMatches($item, $candidates)
             : $this->requestAiMatches($item, $candidates);
 
+        // On an AI failure, keep existing suggestions untouched - we have no
+        // new information about them.
         if ($rawMatches === null) {
             return;
         }
 
-        $this->saveMatches($item, $candidates, $rawMatches);
+        $keptIds = $this->saveMatches($item, $candidates, $rawMatches);
+        $this->pruneStaleSuggestions($item, $candidates, $keptIds);
+    }
+
+    /**
+     * Remove "suggested" matches for this item that the latest run no longer
+     * supports (e.g. the report was edited and the old match doesn't fit).
+     * Only touches counterparts this run actually evaluated - or every
+     * counterpart, when the candidate list wasn't capped, since then anything
+     * missing from it no longer passes the pre-filter at all. Dismissed and
+     * confirmed matches are human decisions and are never removed.
+     */
+    protected function pruneStaleSuggestions(LostItem|FoundItem $item, Collection $candidates, array $keptIds): void
+    {
+        [$ownKey, $otherKey] = $item instanceof LostItem
+            ? ['lost_item_id', 'found_item_id']
+            : ['found_item_id', 'lost_item_id'];
+
+        $query = AiMatch::where($ownKey, $item->id)
+            ->where('status', AiMatchStatus::Suggested)
+            ->whereNotIn($otherKey, $keptIds);
+
+        $candidateListWasCapped = $candidates->count() >= config('matching.max_candidates');
+
+        if ($candidateListWasCapped) {
+            $query->whereIn($otherKey, $candidates->pluck('id'));
+        }
+
+        $query->delete();
     }
 
     /**
@@ -180,9 +212,26 @@ class MatchingService
             of the opposite type, decide which candidates plausibly describe the
             same physical item. Respond with strict JSON only, no prose, in this
             exact shape: {"matches": [{"candidate_id": 12, "score": 85, "reason": "short text"}]}.
-            score is an integer from 0 to 100. Only include candidates you think
-            are plausible matches (score 50 or higher). If none are plausible,
-            return {"matches": []}.
+
+            Rules for scoring:
+            1. First check the KIND of object. A wallet is not a water bottle, keys
+               are not a jacket. If the two reports describe different kinds of
+               objects, it is NOT a match - leave it out entirely, no matter how
+               close the location or date is.
+            2. Only for the same kind of object, score how well the details agree:
+               - 85-100: same kind of object AND distinctive details agree
+                 (color, brand, marks, contents).
+               - 65-84: same kind of object, color agrees, no conflicting details.
+               - 50-64: same kind of object but details are vague or partly differ.
+            3. Location and date are weak supporting evidence only. Never use
+               location or date as the main reason for a match.
+            4. A clear conflict (different color, different brand) means leave it out.
+               A detail that is missing or "unknown" on one side is NOT a conflict.
+
+            The "reason" must name the matching details in a few words, e.g.
+            "both black leather wallets with a red logo".
+            score is an integer from 0 to 100. Only include candidates scoring 50
+            or higher. If none qualify, return {"matches": []}.
             Output ONLY the JSON object above. Do not wrap it in a markdown code
             fence, do not add any explanation before or after it, and do not
             repeat these instructions.
@@ -307,12 +356,13 @@ class MatchingService
      * Re-running matching updates the existing row instead of duplicating
      * it, unless that row was already dismissed or confirmed.
      */
-    protected function saveMatches(LostItem|FoundItem $item, Collection $candidates, array $rawMatches): void
+    protected function saveMatches(LostItem|FoundItem $item, Collection $candidates, array $rawMatches): array
     {
         $candidateIds = $candidates->pluck('id')->all();
         $minScore = config('matching.min_score_to_save');
         $minScoreToNotify = config('matching.min_score_to_notify');
         $modelUsed = config('matching.fake') ? 'fake' : config('services.openai.model');
+        $keptIds = [];
 
         foreach ($rawMatches as $match) {
             if (! is_array($match) || ! in_array($match['candidate_id'] ?? null, $candidateIds, true)) {
@@ -325,8 +375,15 @@ class MatchingService
                 continue;
             }
 
+            // The AI judges similarity, but small models sometimes claim colors
+            // agree when they plainly don't - so enforce that hard fact in code.
+            if ($this->colorsConflict($item->color, $candidates->firstWhere('id', $match['candidate_id'])->color)) {
+                continue;
+            }
+
             $score = min(100, max(0, $score));
             $reason = is_string($match['reason'] ?? null) ? mb_substr($match['reason'], 0, 500) : '';
+            $keptIds[] = $match['candidate_id'];
 
             [$lostItemId, $foundItemId] = $item instanceof LostItem
                 ? [$item->id, $match['candidate_id']]
@@ -356,6 +413,25 @@ class MatchingService
                 $this->notifyReporters($aiMatch);
             }
         }
+
+        return $keptIds;
+    }
+
+    /**
+     * Two reported colors conflict when both are filled in and share no
+     * word ("black" vs "dark black" agree; "blue" vs "green" conflict).
+     * A missing color on either side is never a conflict.
+     */
+    protected function colorsConflict(?string $a, ?string $b): bool
+    {
+        $aWords = $this->significantWords($a);
+        $bWords = $this->significantWords($b);
+
+        if (empty($aWords) || empty($bWords)) {
+            return false;
+        }
+
+        return empty(array_intersect($aWords, $bWords));
     }
 
     protected function notifyReporters(AiMatch $aiMatch): void

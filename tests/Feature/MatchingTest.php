@@ -263,4 +263,97 @@ class MatchingTest extends TestCase
 
         $this->assertSame(AiMatchStatus::Dismissed, $aiMatch->fresh()->status);
     }
+
+    public function test_a_stale_suggestion_is_removed_when_the_report_is_edited_to_no_longer_match(): void
+    {
+        config(['matching.fake' => true]);
+
+        $category = Category::factory()->create();
+
+        $lostItem = LostItem::factory()->create([
+            'category_id' => $category->id,
+            'item_name' => 'Black Leather Wallet',
+            'color' => 'Black',
+            'brand' => null,
+            'description' => 'A black leather wallet with a red logo',
+            'date_lost' => now(),
+        ]);
+
+        $foundItem = FoundItem::factory()->create([
+            'category_id' => $category->id,
+            'item_name' => 'Black Leather Wallet',
+            'color' => 'Black',
+            'brand' => null,
+            'description' => 'A black leather wallet with a red logo',
+            'status' => ItemStatus::Open,
+            'date_found' => now(),
+        ]);
+
+        $this->assertSame(1, AiMatch::count());
+
+        // Editing a key field re-runs matching (sync queue in tests); the
+        // found item no longer resembles the lost one, so the old suggestion
+        // should disappear instead of lingering.
+        $foundItem->update([
+            'item_name' => 'Green Umbrella',
+            'color' => 'Green',
+            'description' => 'A folding umbrella with a wooden handle',
+        ]);
+
+        $this->assertSame(0, AiMatch::count());
+    }
+
+    public function test_an_ai_match_with_conflicting_colors_is_rejected_in_code(): void
+    {
+        config(['matching.fake' => false, 'services.openai.api_key' => 'test-key']);
+
+        $sameColor = null;
+        $otherColor = null;
+
+        // The AI (wrongly) claims both found items are good matches. Creating
+        // items triggers matching right away, so return nothing until both exist.
+        Http::fake(function () use (&$sameColor, &$otherColor) {
+            $matches = ($sameColor && $otherColor) ? [
+                ['candidate_id' => $sameColor->id, 'score' => 80, 'reason' => 'same jacket'],
+                ['candidate_id' => $otherColor->id, 'score' => 80, 'reason' => 'color agrees'],
+            ] : [];
+
+            return Http::response(['choices' => [['message' => ['content' => json_encode(['matches' => $matches])]]]], 200);
+        });
+
+        $category = Category::factory()->create();
+        $sameColor = FoundItem::factory()->create(['category_id' => $category->id, 'color' => 'blue', 'status' => ItemStatus::Open, 'date_found' => now()]);
+        $otherColor = FoundItem::factory()->create(['category_id' => $category->id, 'color' => 'Green', 'status' => ItemStatus::Open, 'date_found' => now()]);
+        $lostItem = LostItem::factory()->create(['category_id' => $category->id, 'color' => 'Blue', 'date_lost' => now()]);
+
+        app(MatchingService::class)->run($lostItem);
+
+        $this->assertTrue(AiMatch::where('found_item_id', $sameColor->id)->exists());
+        $this->assertFalse(AiMatch::where('found_item_id', $otherColor->id)->exists());
+    }
+
+    public function test_a_failed_ai_call_keeps_existing_suggestions(): void
+    {
+        config(['matching.fake' => false, 'services.openai.api_key' => 'test-key']);
+
+        Http::fake([
+            'api.openai.com/*' => Http::response(['choices' => [['message' => ['content' => 'not json at all']]]], 200),
+        ]);
+
+        $category = Category::factory()->create();
+        $lostItem = LostItem::factory()->create(['category_id' => $category->id, 'date_lost' => now()]);
+        $foundItem = FoundItem::factory()->create([
+            'category_id' => $category->id,
+            'status' => ItemStatus::Open,
+            'date_found' => now(),
+        ]);
+        $existing = AiMatch::factory()->create([
+            'lost_item_id' => $lostItem->id,
+            'found_item_id' => $foundItem->id,
+        ]);
+
+        app(MatchingService::class)->run($lostItem);
+
+        $this->assertNotNull($existing->fresh());
+    }
 }

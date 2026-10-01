@@ -29,6 +29,12 @@
                             <div class="small text-muted">{{ $item->category->name }} &middot; {{ $item->location_found }} &middot; {{ $item->date_found->format('M j, Y') }}</div>
                         </div>
                         <div class="d-flex gap-2 align-items-center">
+                            <a href="{{ route('found-items.matches', $item) }}" class="btn btn-sm btn-outline-secondary">
+                                Matches
+                                @if ($item->suggested_matches_count > 0)
+                                    <span class="badge text-bg-primary">{{ $item->suggested_matches_count }}</span>
+                                @endif
+                            </a>
                             <a href="{{ route('found-items.claims', $item) }}" class="btn btn-sm {{ $item->pending_claims_count > 0 ? 'btn-warning' : 'btn-outline-secondary' }}">
                                 Claims
                                 @if ($item->pending_claims_count > 0)
@@ -60,7 +66,13 @@
                             <x-status-badge :status="$item->status" class="ms-2" />
                             <div class="small text-muted">{{ $item->category->name }} &middot; {{ $item->location_lost }} &middot; {{ $item->date_lost->format('M j, Y') }}</div>
                         </div>
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-2 align-items-center">
+                            <a href="{{ route('lost-items.matches', $item) }}" class="btn btn-sm btn-outline-secondary">
+                                Matches
+                                @if ($item->suggested_matches_count > 0)
+                                    <span class="badge text-bg-primary">{{ $item->suggested_matches_count }}</span>
+                                @endif
+                            </a>
                             <a href="{{ route('lost-items.edit', $item) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                             <form method="POST" action="{{ route('lost-items.destroy', $item) }}"
                                   onsubmit="return confirm('Delete this lost item report? This cannot be undone.');">

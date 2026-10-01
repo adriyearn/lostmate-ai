@@ -20,6 +20,9 @@
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="AI_MATCHING_FAKE" value="true"/>
+        <env name="OPENAI_BASE_URL" value="https://api.openai.com/v1"/>
+        <env name="OPENAI_MODEL" value="gpt-4o-mini"/>
+        <env name="OPENAI_API_KEY" value=""/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>

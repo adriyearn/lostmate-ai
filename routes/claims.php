@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
     Route::get('/found-items/{foundItem}/claim', [ClaimController::class, 'create'])->name('claims.create');
-    Route::post('/found-items/{foundItem}/claim', [ClaimController::class, 'store'])->name('claims.store');
+    Route::post('/found-items/{foundItem}/claim', [ClaimController::class, 'store'])->middleware('throttle:5,1')->name('claims.store');
     Route::get('/found-items/{foundItem}/claims', [FoundItemController::class, 'claims'])->name('found-items.claims');
     Route::post('/found-items/{foundItem}/withdraw', [FoundItemController::class, 'withdraw'])->name('found-items.withdraw');
 

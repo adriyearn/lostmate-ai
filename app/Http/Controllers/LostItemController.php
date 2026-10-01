@@ -98,6 +98,7 @@ class LostItemController extends Controller
 
         $matches = $lostItem->aiMatches()
             ->where('status', '!=', AiMatchStatus::Dismissed)
+            ->has('foundItem')
             ->with(['foundItem.category', 'foundItem.images'])
             ->orderByDesc('score')
             ->get();

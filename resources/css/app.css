@@ -459,3 +459,7 @@ code { color: var(--lm-accent); }
 
 .sidebar .nav-link:hover { background: #f2f2f3; color: var(--lm-ink); }
 .sidebar .nav-link.active { background: #f2f2f3; color: var(--lm-ink); }
+
+@media (max-width: 767.98px) {
+    .sidebar { min-height: 0; border-right: 0 !important; border-bottom: 1px solid var(--lm-line); }
+}

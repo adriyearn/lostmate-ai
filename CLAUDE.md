@@ -19,7 +19,11 @@ easy for the student developers to explain during their defense.
   rules" below.
 - Queue: Laravel database queue driver (QUEUE_CONNECTION=database)
 - Notifications: Laravel's built-in database notifications
-- Local dev: localhost (XAMPP or Laragon), Git/GitHub for version control
+- Local dev: localhost (XAMPP or Laragon), Git/GitHub for version control.
+  Run `composer dev` - it starts the web server, queue worker (required
+  for AI matching), scheduler, and Vite together.
+- Tests never touch the network: tests/TestCase.php calls
+  Http::preventStrayRequests(), and phpunit.xml pins AI settings.
 
 ## Full database schema
 See `docs/DATABASE_SCHEMA.md`. Follow it exactly for table names, columns,
@@ -61,6 +65,10 @@ becomes returned.
   {"matches": [{"candidate_id": 12, "score": 85, "reason": "short text"}]}
 - Validate the JSON. Discard candidate ids not in the candidate list.
   Save only matches with score >= 50 to ai_matches.
+- Hard facts are enforced in code, not trusted to the AI: a match is
+  rejected if both reports list a color and the colors share no word.
+- When matching re-runs, "suggested" matches the new run no longer
+  supports are removed. Dismissed/confirmed matches are never touched.
 - If the AI call fails or returns invalid JSON, the report still saves
   successfully. Log the error and allow a retry.
 - Config in .env only: OPENAI_API_KEY, OPENAI_MODEL, OPENAI_BASE_URL. Never

@@ -9,7 +9,7 @@
     </div>
 
     @if ($matches->isEmpty())
-        <p class="text-muted">No possible matches yet. We'll notify you when one turns up.</p>
+        <p class="text-muted">No possible matches yet. The AI checks reports in the background (usually within a minute of submitting) and you'll get a notification when a strong match turns up.</p>
     @else
         <div class="row row-cols-1 row-cols-md-2 g-3">
             @foreach ($matches as $match)

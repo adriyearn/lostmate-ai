@@ -14,7 +14,14 @@
 
         <div class="container-fluid">
             <div class="row">
-                <nav class="col-md-2 d-md-block bg-white border-end sidebar py-3 px-0">
+                <div class="d-md-none py-2 border-bottom bg-white">
+                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#adminSidebar" aria-controls="adminSidebar" aria-expanded="false">
+                        Admin menu
+                    </button>
+                </div>
+
+                <nav id="adminSidebar" class="col-md-2 collapse d-md-block bg-white border-end sidebar py-3 px-0">
                     <ul class="nav flex-column">
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active fw-semibold' : '' }}" href="{{ route('admin.dashboard') }}">
