@@ -15,10 +15,23 @@ same image, each with a different start command:
 | `worker`    | `php artisan queue:work --tries=3 --max-time=3600` | Processes AI matching, notifications       |
 | `scheduler` | `php artisan schedule:work`                        | Runs the daily auto-close-returned-items job |
 
+## 0. Push this repo to GitHub
+
+Railway deploys from a GitHub repository, so this project needs to live
+there first (it's currently only a local git repo).
+
+1. Create a new, empty repository at [github.com/new](https://github.com/new)
+   (don't initialize it with a README - this project already has one).
+2. From the project folder:
+   ```
+   git remote add origin https://github.com/<your-username>/<repo-name>.git
+   git push -u origin master
+   ```
+
 ## 1. Create the Railway project
 
 1. Go to [railway.app](https://railway.app) and sign up (GitHub login is fastest).
-2. **New Project → Deploy from GitHub repo** → pick this repository.
+2. **New Project → Deploy from GitHub repo** → pick the repository you just pushed.
    Railway will detect the `Dockerfile` and start a build automatically -
    let that first build fail for now, there's no database yet.
 
