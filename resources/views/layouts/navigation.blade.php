@@ -1,7 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
     <div class="container">
-        <a class="navbar-brand fw-semibold" href="{{ auth()->check() ? route('dashboard') : route('login') }}">
-            LostMate AI
+        <a class="navbar-brand" href="{{ auth()->check() ? route('dashboard') : route('login') }}">
+            <span class="lm-logo">L</span>
+            LostMate
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"

@@ -13,14 +13,14 @@
         @include('layouts.navigation')
 
         @isset($header)
-            <header class="bg-white border-bottom py-3">
+            <header class="lm-page-header">
                 <div class="container">
                     {{ $header }}
                 </div>
             </header>
         @endisset
 
-        <main class="py-4">
+        <main class="py-4 pb-5">
             <div class="container">
                 <x-flash-messages />
 

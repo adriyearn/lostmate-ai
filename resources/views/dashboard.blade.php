@@ -1,28 +1,25 @@
 <x-app-layout>
     <x-slot name="header">
-        <h1 class="h4 mb-0">Dashboard</h1>
+        <div class="d-flex justify-content-between align-items-end flex-wrap gap-3">
+            <div>
+                <p class="text-muted small mb-1">{{ auth()->user()->role->label() }}</p>
+                <h1>Welcome back, {{ auth()->user()->name }}</h1>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ route('lost-items.create') }}" class="btn btn-primary">Report lost item</a>
+                <a href="{{ route('found-items.create') }}" class="btn btn-outline-secondary">Report found item</a>
+            </div>
+        </div>
     </x-slot>
 
-    <div class="card mb-4">
-        <div class="card-body">
-            <h2 class="h5">Welcome back, {{ auth()->user()->name }}!</h2>
-            <p class="text-muted mb-0">
-                You're logged in as
-                <span class="badge {{ auth()->user()->isAdmin() ? 'text-bg-danger' : 'text-bg-secondary' }}">
-                    {{ auth()->user()->role->label() }}
-                </span>.
-            </p>
-        </div>
-    </div>
-
-    <div class="d-flex justify-content-between align-items-center mb-2">
-        <h2 class="h5 mb-0">Recently Lost</h2>
-        <a href="{{ route('browse.index', ['tab' => 'lost']) }}" class="small">Browse all &rarr;</a>
+    <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+        <h2 class="lm-section-title">Recently lost</h2>
+        <a href="{{ route('browse.index', ['tab' => 'lost']) }}" class="small text-muted">View all &rarr;</a>
     </div>
     @if ($recentLostItems->isEmpty())
         <p class="text-muted">No lost items reported yet.</p>
     @else
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 mb-4">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 mb-5">
             @foreach ($recentLostItems as $item)
                 <div class="col">
                     <x-item-card :item="$item" type="lost" />
@@ -31,9 +28,9 @@
         </div>
     @endif
 
-    <div class="d-flex justify-content-between align-items-center mb-2">
-        <h2 class="h5 mb-0">Recently Found</h2>
-        <a href="{{ route('browse.index', ['tab' => 'found']) }}" class="small">Browse all &rarr;</a>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="lm-section-title">Recently found</h2>
+        <a href="{{ route('browse.index', ['tab' => 'found']) }}" class="small text-muted">View all &rarr;</a>
     </div>
     @if ($recentFoundItems->isEmpty())
         <p class="text-muted">No found items reported yet.</p>

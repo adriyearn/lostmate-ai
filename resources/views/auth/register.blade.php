@@ -1,5 +1,6 @@
 <x-guest-layout>
-    <h1 class="h4 mb-3">Create an account</h1>
+    <h1 class="mb-1">Create an account</h1>
+    <p class="text-muted small mb-4">Join to report and recover lost items on campus.</p>
 
     <form method="POST" action="{{ route('register') }}">
         @csrf
@@ -34,12 +35,10 @@
             <x-input-error :messages="$errors->get('password_confirmation')" />
         </div>
 
-        <div class="d-flex align-items-center justify-content-between">
-            <a class="small text-decoration-none" href="{{ route('login') }}">
-                Already registered?
-            </a>
-
-            <x-primary-button>Register</x-primary-button>
-        </div>
+        <x-primary-button>Create account</x-primary-button>
     </form>
+
+    <p class="mb-0 mt-4 small text-center text-muted">
+        Already have an account? <a href="{{ route('login') }}" class="fw-medium">Log in</a>
+    </p>
 </x-guest-layout>

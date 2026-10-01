@@ -8,25 +8,21 @@
     $thumbnail = $item->images->first();
 @endphp
 
-<div class="card h-100">
-    <a href="{{ route($routeName, $item) }}" class="text-decoration-none text-reset">
-        @if ($thumbnail)
-            <img src="{{ asset('storage/'.$thumbnail->path) }}" class="card-img-top" alt="{{ $item->item_name }}" style="height: 180px; object-fit: cover;">
-        @else
-            <div class="card-img-top bg-body-secondary d-flex align-items-center justify-content-center text-muted" style="height: 180px;">
-                No photo
-            </div>
-        @endif
+<a href="{{ route($routeName, $item) }}" class="card h-100 lm-item-card text-reset overflow-hidden">
+    @if ($thumbnail)
+        <img src="{{ asset('storage/'.$thumbnail->path) }}" class="lm-thumb" alt="{{ $item->item_name }}">
+    @else
+        <div class="lm-thumb-empty">No photo</div>
+    @endif
 
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-start mb-2">
-                <h3 class="h6 mb-0">{{ $item->item_name }}</h3>
-                <x-status-badge :status="$item->status" />
-            </div>
-            <p class="small text-muted mb-1">{{ $item->category->name }}</p>
-            <p class="small text-muted mb-0">
-                {{ $location }} &middot; {{ $date->format('M j, Y') }}
-            </p>
+    <div class="card-body p-3">
+        <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+            <h3 class="h6 mb-0 text-truncate">{{ $item->item_name }}</h3>
+            <x-status-badge :status="$item->status" />
         </div>
-    </a>
-</div>
+        <p class="small text-muted mb-0">
+            {{ $item->category->name }} &middot; {{ $location }}
+        </p>
+        <p class="small text-muted mb-0">{{ $date->format('M j, Y') }}</p>
+    </div>
+</a>

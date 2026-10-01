@@ -17,8 +17,8 @@
             <div class="col">
                 <div class="card h-100">
                     <div class="card-body">
-                        <div class="small text-muted">{{ $card['label'] }}</div>
-                        <div class="h3 mb-0">{{ $card['value'] }}</div>
+                        <div class="lm-section-title mb-2">{{ $card['label'] }}</div>
+                        <div class="lm-stat">{{ $card['value'] }}</div>
                     </div>
                 </div>
             </div>
@@ -46,12 +46,12 @@
                         {
                             label: 'Lost',
                             data: @json($chartData['lost']),
-                            backgroundColor: '#0d6efd',
+                            backgroundColor: '#111111', borderRadius: 6,
                         },
                         {
                             label: 'Found',
                             data: @json($chartData['found']),
-                            backgroundColor: '#198754',
+                            backgroundColor: '#c7c7cc', borderRadius: 6,
                         },
                     ],
                 },

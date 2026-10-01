@@ -12,14 +12,12 @@
     <body class="bg-light">
         @include('layouts.navigation')
 
-        <div class="d-flex justify-content-center align-items-start py-5">
-            <div class="w-100" style="max-width: 28rem;">
-                <div class="card shadow-sm">
-                    <div class="card-body p-4">
-                        <x-flash-messages />
+        <div class="lm-auth">
+            <div class="card">
+                <div class="card-body">
+                    <x-flash-messages />
 
-                        {{ $slot }}
-                    </div>
+                    {{ $slot }}
                 </div>
             </div>
         </div>
