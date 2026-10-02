@@ -29,6 +29,6 @@ php artisan migrate --force
 
 # The steps above ran as root, but Apache runs as www-data and must be able
 # to write sessions, caches, and uploaded photos (including the Railway volume).
-chown -R www-data:www-data storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache || echo "WARNING: could not change owner of storage (continuing)"
 
 exec apache2-foreground
