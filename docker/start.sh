@@ -1,14 +1,23 @@
 #!/bin/sh
 set -e
 
-# Railway injects $PORT - Apache's default config listens on 80, so rewrite it.
-PORT="${PORT:-8080}"
-sed -i "s/80/${PORT}/g" /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf
+# Railway may restart this same container several times, so every step
+# below must be safe to run again (no "find and replace" that could stack up).
 
-# The storage/app/public -> public/storage symlink lives in the writable
-# volume's target but the symlink itself is inside the image, so it has to
-# be recreated on every boot of a fresh container.
-php artisan storage:link || true
+# Apache must load exactly ONE "MPM" (request-handling engine). mod_php needs
+# prefork, so make sure the other two are switched off.
+rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.*
+a2enmod mpm_prefork >/dev/null 2>&1 || true
+
+# Railway tells us which port to listen on in $PORT. Write the port settings
+# from scratch each time instead of editing them in place.
+PORT="${PORT:-8080}"
+echo "Listen ${PORT}" > /etc/apache2/ports.conf
+sed -i -E "s/<VirtualHost \*:[0-9]+>/<VirtualHost *:${PORT}>/" /etc/apache2/sites-available/000-default.conf
+
+# Uploaded photos live in a Railway volume; the public/storage link that
+# points at them is part of the image, so create it only if it's missing.
+[ -L public/storage ] || php artisan storage:link
 
 php artisan config:cache
 php artisan route:cache
