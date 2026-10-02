@@ -27,4 +27,8 @@ php artisan view:cache
 # run on every boot since already-applied migrations are skipped.
 php artisan migrate --force
 
+# The steps above ran as root, but Apache runs as www-data and must be able
+# to write sessions, caches, and uploaded photos (including the Railway volume).
+chown -R www-data:www-data storage bootstrap/cache
+
 exec apache2-foreground
