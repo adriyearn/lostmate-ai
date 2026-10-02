@@ -39,7 +39,7 @@
     </div>
 
     @push('scripts')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var ctx = document.getElementById('reportsChart');
@@ -52,12 +52,12 @@
                         {
                             label: 'Lost',
                             data: @json($chartData['lost']),
-                            backgroundColor: '#6366f1', borderRadius: 8,
+                            backgroundColor: '#e5484d', borderColor: '#1a1917', borderWidth: 1.5, borderRadius: 6,
                         },
                         {
                             label: 'Found',
                             data: @json($chartData['found']),
-                            backgroundColor: '#c4b5fd', borderRadius: 8,
+                            backgroundColor: '#0f9d8a', borderColor: '#1a1917', borderWidth: 1.5, borderRadius: 6,
                         },
                     ],
                 },

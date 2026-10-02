@@ -32,9 +32,13 @@ class FoundItemPolicy
         return $user->id === $foundItem->user_id;
     }
 
+    /**
+     * Once the item is at the office, the finder can no longer delete or
+     * withdraw the report - the office is holding the physical item.
+     */
     public function delete(User $user, FoundItem $foundItem): bool
     {
-        return $user->id === $foundItem->user_id;
+        return $user->id === $foundItem->user_id && ! $foundItem->isAtOffice();
     }
 
     /**

@@ -98,8 +98,8 @@
 @endif
 
 <div class="mb-3">
-    <x-input-label for="images" value="Add Photos (up to 3 total, jpg/jpeg/png/webp, max 5MB each)" />
-    <input id="images" type="file" name="images[]" class="form-control" accept="image/png,image/jpeg,image/webp" multiple>
+    <x-input-label for="images" value="Add Photos (up to 3 total, jpg/png/webp; large phone photos are shrunk automatically)" />
+    <input id="images" type="file" name="images[]" class="form-control" accept="image/png,image/jpeg,image/webp" multiple data-lm-images data-max-files="3">
     <x-input-error :messages="$errors->get('images')" />
     <x-input-error :messages="$errors->get('images.0')" />
 </div>

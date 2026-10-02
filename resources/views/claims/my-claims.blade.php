@@ -18,8 +18,12 @@
                             <div class="small text-muted">Submitted {{ $claim->created_at->format('M j, Y') }}</div>
                         </div>
 
-                        @if ($claim->status->value === 'approved')
-                            <span class="badge text-bg-info">Approved &mdash; coordinate with the finder for handover</span>
+                        @if ($claim->status === App\Enums\ClaimStatus::Pending)
+                            <form method="POST" action="{{ route('claims.cancel', $claim) }}"
+                                  onsubmit="return confirm('Cancel this claim? The finder will no longer review it.');">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg"></i> Cancel claim</button>
+                            </form>
                         @endif
                     </div>
 
@@ -27,6 +31,20 @@
 
                     @if ($claim->finder_response)
                         <p class="small mb-0"><strong>Finder's response:</strong> {{ $claim->finder_response }}</p>
+                    @endif
+
+                    @if ($claim->status === App\Enums\ClaimStatus::Approved)
+                        {{-- Only the claimant ever sees this code. The finder types it in to confirm the handover. --}}
+                        <div class="lm-pickup mt-3">
+                            <div>
+                                <div class="lm-mono text-muted">Your pickup code</div>
+                                <div class="lm-pickup-code">{{ $claim->pickupCode() }}</div>
+                            </div>
+                            <p class="small mb-0">
+                                Show this code to the finder when you collect your item.
+                                <strong>Don't share it before you have the item in hand.</strong>
+                            </p>
+                        </div>
                     @endif
                 </div>
             @endforeach

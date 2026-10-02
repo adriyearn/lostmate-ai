@@ -6,7 +6,7 @@ use App\Http\Controllers\LostItemController;
 use App\Http\Controllers\MyClaimController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/found-items/{foundItem}/claim', [ClaimController::class, 'create'])->name('claims.create');
     Route::post('/found-items/{foundItem}/claim', [ClaimController::class, 'store'])->middleware('throttle:5,1')->name('claims.store');
     Route::get('/found-items/{foundItem}/claims', [FoundItemController::class, 'claims'])->name('found-items.claims');
@@ -14,6 +14,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/claims/{claim}/approve', [ClaimController::class, 'approve'])->name('claims.approve');
     Route::post('/claims/{claim}/reject', [ClaimController::class, 'reject'])->name('claims.reject');
+    Route::post('/claims/{claim}/cancel', [ClaimController::class, 'cancel'])->name('claims.cancel');
     Route::post('/claims/{claim}/confirm-returned', [ClaimController::class, 'confirmReturned'])->name('claims.confirm-returned');
 
     Route::get('/my-claims', [MyClaimController::class, 'index'])->name('my-claims.index');

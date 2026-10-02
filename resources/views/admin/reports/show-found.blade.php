@@ -44,7 +44,12 @@
                         <dt class="col-5">Date Found</dt>
                         <dd class="col-7">{{ $foundItem->date_found->format('M j, Y') }}</dd>
                         <dt class="col-5">Currently At</dt>
-                        <dd class="col-7">{{ $foundItem->current_location ?? '—' }}</dd>
+                        <dd class="col-7">
+                            {{ $foundItem->current_location ?? '—' }}
+                            @if ($foundItem->isAtOffice())
+                                <div class="small text-muted">Received {{ $foundItem->surrendered_at->format('M j, Y') }} by {{ $foundItem->surrenderedTo?->name ?? 'former staff' }}</div>
+                            @endif
+                        </dd>
                         <dt class="col-5">Reporter</dt>
                         <dd class="col-7">
                             <a href="{{ route('admin.users.show', $foundItem->user) }}">{{ $foundItem->user->name }}</a>
@@ -56,6 +61,14 @@
 
             <div class="d-flex gap-2 flex-wrap">
                 <a href="{{ route('found-items.show', $foundItem) }}" class="btn btn-outline-secondary">View Public Page</a>
+
+                @if (! $foundItem->isAtOffice() && ! in_array($foundItem->status->value, ['returned', 'closed'], true))
+                    <form method="POST" action="{{ route('admin.office.receive', $foundItem) }}"
+                          onsubmit="return confirm('Confirm the finder handed this item in at the office?');">
+                        @csrf
+                        <button type="submit" class="btn btn-dark"><i class="bi bi-building-check"></i> Received at office</button>
+                    </form>
+                @endif
 
                 @if ($foundItem->status->value !== 'closed')
                     <form method="POST" action="{{ route('admin.reports.close-found', $foundItem) }}">

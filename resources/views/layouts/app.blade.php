@@ -7,6 +7,8 @@
 
         <title>{{ config('app.name', 'LostMate AI') }}</title>
 
+        @include('layouts.partials.theme')
+        @include('layouts.partials.pwa')
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="bg-light">
@@ -30,7 +32,7 @@
 
         <footer class="lm-footer">
             <div class="container d-flex flex-wrap justify-content-between gap-2">
-                <span>&copy; {{ date('Y') }} LostMate AI &middot; Campus lost &amp; found</span>
+                <span class="d-inline-flex align-items-center gap-2"><x-logo style="width:22px;height:22px;" /> <span class="lm-mono">&copy; {{ date('Y') }} LostMate AI &middot; Campus lost &amp; found</span></span>
                 <span><i class="bi bi-stars"></i> AI matches are suggestions &mdash; always verify ownership.</span>
             </div>
         </footer>

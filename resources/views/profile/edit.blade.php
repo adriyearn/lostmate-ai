@@ -18,7 +18,7 @@
                             </div>
                             <div class="flex-grow-1">
                                 <x-input-label for="avatar" value="Profile photo" />
-                                <input id="avatar" type="file" name="avatar" class="form-control" accept="image/png,image/jpeg,image/webp">
+                                <input id="avatar" type="file" name="avatar" class="form-control" accept="image/png,image/jpeg,image/webp" data-lm-images data-no-preview>
                                 <p class="form-text mb-0">JPG, PNG or WEBP, up to 5 MB. A square photo of your face works best.</p>
                                 <x-input-error :messages="$errors->get('avatar')" />
                             </div>
@@ -75,6 +75,36 @@
                     <div class="small text-muted mb-2">{{ auth()->user()->email }}</div>
                     <span class="badge text-bg-primary">{{ auth()->user()->role->label() }}</span>
                     <p class="small text-muted mt-3 mb-0"><i class="bi bi-lock"></i> Your email and contact number are never shown to other users.</p>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h2 class="lm-section-title mb-3"><i class="bi bi-key"></i> Change password</h2>
+
+                    <form method="POST" action="{{ route('password.update') }}">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="mb-3">
+                            <x-input-label for="current_password" value="Current password" />
+                            <x-text-input id="current_password" type="password" name="current_password" autocomplete="current-password" required />
+                            <x-input-error :messages="$errors->updatePassword->get('current_password')" />
+                        </div>
+
+                        <div class="mb-3">
+                            <x-input-label for="new_password" value="New password" />
+                            <x-text-input id="new_password" type="password" name="password" autocomplete="new-password" required />
+                            <x-input-error :messages="$errors->updatePassword->get('password')" />
+                        </div>
+
+                        <div class="mb-3">
+                            <x-input-label for="password_confirmation" value="Confirm new password" />
+                            <x-text-input id="password_confirmation" type="password" name="password_confirmation" autocomplete="new-password" required />
+                        </div>
+
+                        <button type="submit" class="btn btn-dark w-100"><i class="bi bi-shield-lock"></i> Update password</button>
+                    </form>
                 </div>
             </div>
         </div>

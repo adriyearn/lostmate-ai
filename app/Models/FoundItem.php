@@ -33,6 +33,9 @@ class FoundItem extends Model
         'closed_at',
     ];
 
+    // surrendered_at / surrendered_to are deliberately NOT fillable: only
+    // OfficeCustodyService sets them, so a finder can't fake a drop-off.
+
     /**
      * Defense in depth: keeps hidden_details out of array/JSON
      * serialization (e.g. toJson(), an accidental response()->json($item))
@@ -48,12 +51,25 @@ class FoundItem extends Model
             'date_found' => 'date',
             'status' => ItemStatus::class,
             'closed_at' => 'datetime',
+            'surrendered_at' => 'datetime',
         ];
     }
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /** The office staff member (admin) who received the item. */
+    public function surrenderedTo(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'surrendered_to');
+    }
+
+    /** True once the item has been turned in at the lost & found office. */
+    public function isAtOffice(): bool
+    {
+        return $this->surrendered_at !== null;
     }
 
     public function category(): BelongsTo

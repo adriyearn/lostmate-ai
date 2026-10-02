@@ -86,6 +86,8 @@ Indexes: (category_id, status), date_lost.
 | date_found | date | |
 | time_found | time | nullable |
 | current_location | varchar(255) | nullable (e.g., "With finder", "Guidance Office") |
+| surrendered_at | timestamp | nullable; when the item was turned in at the lost & found office |
+| surrendered_to | FK → users.id | nullable, set null on delete; office staff (admin) who received it |
 | status | enum('open','matched','claimed','returned','closed') | default 'open' |
 | closed_at | timestamp | nullable |
 | timestamps | | |

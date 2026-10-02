@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\UserRole;
+use App\Notifications\QueuedVerifyEmail;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,7 +16,7 @@ use Illuminate\Notifications\Notifiable;
 
 #[Fillable(['name', 'email', 'student_id', 'password'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
@@ -40,6 +41,30 @@ class User extends Authenticatable
         static::created(function (User $user) {
             $user->profile()->create([]);
         });
+    }
+
+    /**
+     * Send the "verify your email" message through the queue, so a slow or
+     * broken mail server never makes registration fail.
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new QueuedVerifyEmail);
+    }
+
+    /**
+     * Treat everyone as verified when verification is switched off with
+     * REQUIRE_EMAIL_VERIFICATION=false. Both the "verified" route middleware
+     * and the registration email check this method, so this one switch
+     * turns the whole feature on or off.
+     */
+    public function hasVerifiedEmail(): bool
+    {
+        if (! config('lostmate.require_email_verification')) {
+            return true;
+        }
+
+        return parent::hasVerifiedEmail();
     }
 
     public function profile(): HasOne

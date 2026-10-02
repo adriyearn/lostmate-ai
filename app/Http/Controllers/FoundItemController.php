@@ -135,7 +135,7 @@ class FoundItemController extends Controller
 
     public function withdraw(FoundItem $foundItem, ItemStatusService $statusService): RedirectResponse
     {
-        $this->authorize('update', $foundItem);
+        $this->authorize('delete', $foundItem);
 
         $statusService->transition($foundItem, ItemStatus::Closed);
 

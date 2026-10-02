@@ -66,6 +66,11 @@ class ClaimService
 
         $foundItem->user->notify(new ClaimSubmitted($claim));
 
+        // Items held at the office are reviewed by the staff member who received them.
+        if ($foundItem->isAtOffice() && $foundItem->surrenderedTo) {
+            $foundItem->surrenderedTo->notify(new ClaimSubmitted($claim));
+        }
+
         return $claim;
     }
 
@@ -115,6 +120,22 @@ class ClaimService
 
         $claim->loadMissing('claimant');
         $claim->claimant->notify(new ClaimRejected($claim));
+    }
+
+    /**
+     * The claimant withdraws their own pending claim (e.g. they claimed the
+     * wrong item). Items go back to "open" the same way as a rejection, but
+     * nobody is notified - the finder simply sees the claim as cancelled.
+     */
+    public function cancel(Claim $claim): void
+    {
+        if ($claim->status !== ClaimStatus::Pending) {
+            throw new InvalidStatusTransitionException('Only a pending claim can be cancelled.');
+        }
+
+        $claim->update(['status' => ClaimStatus::Cancelled]);
+
+        $this->revertItemsIfNoActiveClaims($claim);
     }
 
     /**

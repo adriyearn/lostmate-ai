@@ -11,16 +11,14 @@ use App\Models\FoundItem;
 use App\Models\LostItem;
 use App\Models\Report;
 use App\Models\User;
+use App\Services\ReportSummaryService;
 use Carbon\Carbon;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index(): View
+    public function index(ReportSummaryService $summary): View
     {
-        $recoveredFoundItems = FoundItem::whereIn('status', [ItemStatus::Returned, ItemStatus::Closed])->count();
-        $totalFoundItems = FoundItem::count();
-
         return view('admin.dashboard', [
             'stats' => [
                 'users' => User::count(),
@@ -32,9 +30,7 @@ class DashboardController extends Controller
                     + FoundItem::where('status', ItemStatus::Returned)->count(),
                 'pendingClaims' => Claim::where('status', ClaimStatus::Pending)->count(),
                 'pendingFlags' => Report::where('status', ReportStatus::Pending)->count(),
-                'recoveryRate' => $totalFoundItems > 0
-                    ? round(($recoveredFoundItems / $totalFoundItems) * 100)
-                    : 0,
+                'recoveryRate' => $summary->recoveryRate(),
             ],
             'chartData' => $this->monthlyReportCounts(),
         ]);

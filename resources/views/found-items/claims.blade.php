@@ -41,7 +41,11 @@
                         <p class="small mb-2"><strong>Your response:</strong> {{ $claim->finder_response }}</p>
                     @endif
 
-                    @if ($claim->status->value === 'pending')
+                    @cannot('review', $claim)
+                        @if (in_array($claim->status->value, ['pending', 'approved'], true))
+                            <p class="small text-muted mb-0"><i class="bi bi-building"></i> Office staff are handling this claim.</p>
+                        @endif
+                    @elseif ($claim->status->value === 'pending')
                         <div class="row g-2">
                             <div class="col-md-8">
                                 <form method="POST" action="{{ route('claims.approve', $claim) }}" class="d-flex gap-2">
@@ -60,12 +64,23 @@
                             </div>
                         </div>
                     @elseif ($claim->status->value === 'approved')
+                        {{-- The claimant sees a 6-digit code on their My Claims page; entering it proves the right person is collecting. --}}
                         <form method="POST" action="{{ route('claims.confirm-returned', $claim) }}"
                               onsubmit="return confirm('Confirm the item has been handed over to the claimant?');">
                             @csrf
-                            <button type="submit" class="btn btn-sm btn-primary">Confirm Returned</button>
+                            <label for="pickup_code_{{ $claim->id }}" class="form-label small">
+                                <i class="bi bi-qr-code"></i> Ask the claimant for their pickup code
+                            </label>
+                            <div class="d-flex flex-wrap gap-2" style="max-width: 26rem;">
+                                <input id="pickup_code_{{ $claim->id }}" type="text" name="pickup_code" inputmode="numeric"
+                                       pattern="[0-9]{6}" maxlength="6" placeholder="6-digit code" required autocomplete="off"
+                                       class="form-control form-control-sm lm-mono flex-grow-1 {{ $errors->has('pickup_code') ? 'is-invalid' : '' }}"
+                                       style="font-size: 1rem; letter-spacing: 0.3em; width: auto;">
+                                <button type="submit" class="btn btn-sm btn-primary text-nowrap"><i class="bi bi-check2-circle"></i> Confirm returned</button>
+                            </div>
+                            <x-input-error :messages="$errors->get('pickup_code')" />
                         </form>
-                    @endif
+                    @endcannot
                 </div>
             </div>
         @endforeach

@@ -33,6 +33,23 @@ class Claim extends Model
         ];
     }
 
+    /**
+     * 6-digit code the claimant shows the finder at handover. The finder
+     * must enter it before marking the item returned, which proves the
+     * person collecting the item is the approved claimant.
+     *
+     * It is calculated, not stored: a keyed hash (HMAC) of the claim's id
+     * using the app's secret APP_KEY. The same claim always gives the same
+     * code, but nobody can work it out without the server's key.
+     */
+    public function pickupCode(): string
+    {
+        $hash = hash_hmac('sha256', 'claim-pickup:'.$this->id, (string) config('app.key'));
+
+        // Turn the first 8 hex characters into a number, keep the last 6 digits.
+        return str_pad((string) (hexdec(substr($hash, 0, 8)) % 1000000), 6, '0', STR_PAD_LEFT);
+    }
+
     public function foundItem(): BelongsTo
     {
         return $this->belongsTo(FoundItem::class);

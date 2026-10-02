@@ -1,8 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
     <div class="container">
-        <a class="navbar-brand" href="{{ auth()->check() ? route('dashboard') : route('login') }}">
-            <span class="lm-logo"><i class="bi bi-search-heart"></i></span>
-            <span>LostMate <span class="lm-gradient-text">AI</span></span>
+        <a class="navbar-brand" href="{{ auth()->check() ? route('dashboard') : route('home') }}">
+            <x-logo />
+            <span>LostMate<span class="lm-brand-ai">AI</span></span>
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
@@ -45,6 +45,19 @@
             </ul>
 
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-1">
+                <li class="nav-item">
+                    {{-- Hidden until the browser says the app can be installed (resources/js/pwa.js). --}}
+                    <button type="button" class="nav-link lm-icon-btn lm-install-app d-none border-0 bg-transparent" title="Install LostMate as an app" aria-label="Install LostMate as an app">
+                        <i class="bi bi-phone"></i>
+                        <span class="d-lg-none ms-2">Install app</span>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="nav-link lm-icon-btn lm-theme-toggle border-0 bg-transparent" title="Switch light/dark mode" aria-label="Switch light/dark mode">
+                        <i class="bi bi-moon-stars"></i><i class="bi bi-sun"></i>
+                        <span class="d-lg-none ms-2">Light / dark mode</span>
+                    </button>
+                </li>
                 @guest
                     <li class="nav-item">
                         <x-nav-link :href="route('login')" :active="request()->routeIs('login')">

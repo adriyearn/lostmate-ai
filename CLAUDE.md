@@ -61,6 +61,10 @@ becomes returned.
 - Send only text details: item name, category, color, brand, location,
   date, description. NEVER send hidden_details, user names, emails,
   or phone numbers to the AI.
+- Exception (approved, opt-in, off by default): AI_MATCHING_PHOTOS=true
+  also sends the FIRST photo of each report at "low" detail. The system
+  prompt tells the AI never to read out personal info visible in photos.
+  Needs a vision model (gpt-4o-mini; not llama3.2:3b).
 - The AI must return strict JSON only, in this shape:
   {"matches": [{"candidate_id": 12, "score": 85, "reason": "short text"}]}
 - Validate the JSON. Discard candidate ids not in the candidate list.

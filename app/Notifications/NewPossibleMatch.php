@@ -4,15 +4,19 @@ namespace App\Notifications;
 
 use App\Models\AiMatch;
 use App\Models\User;
+use App\Notifications\Concerns\AlsoSendsEmail;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class NewPossibleMatch extends Notification
+class NewPossibleMatch extends Notification implements ShouldQueue
 {
+    use AlsoSendsEmail;
+
     public function __construct(public AiMatch $aiMatch) {}
 
-    public function via(User $notifiable): array
+    protected function mailSubject(): string
     {
-        return ['database'];
+        return 'Possible match for your report';
     }
 
     public function toArray(User $notifiable): array

@@ -7,6 +7,8 @@
 
         <title>Admin &middot; {{ config('app.name', 'LostMate AI') }}</title>
 
+        @include('layouts.partials.theme')
+        @include('layouts.partials.pwa')
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="bg-light">
@@ -22,15 +24,17 @@
                 </div>
 
                 <nav id="adminSidebar" class="col-md-2 collapse d-md-block bg-white border-end sidebar py-3 px-0">
-                    <div class="lm-sidebar-label">Admin</div>
+                    <div class="lm-sidebar-label">Back office</div>
                     <ul class="nav flex-column">
                         @foreach ([
                             ['pattern' => 'admin.dashboard', 'route' => 'admin.dashboard', 'icon' => 'bi-speedometer2', 'label' => 'Dashboard'],
                             ['pattern' => 'admin.users.*', 'route' => 'admin.users.index', 'icon' => 'bi-people', 'label' => 'Users'],
                             ['pattern' => 'admin.reports.*', 'route' => 'admin.reports.index', 'icon' => 'bi-folder2-open', 'label' => 'Lost & Found Reports'],
                             ['pattern' => 'admin.claims.*', 'route' => 'admin.claims.index', 'icon' => 'bi-patch-check', 'label' => 'Claims'],
+                            ['pattern' => 'admin.office.*', 'route' => 'admin.office.index', 'icon' => 'bi-building', 'label' => 'Office & Unclaimed'],
                             ['pattern' => 'admin.categories.*', 'route' => 'admin.categories.index', 'icon' => 'bi-tags', 'label' => 'Categories'],
                             ['pattern' => 'admin.flags.*', 'route' => 'admin.flags.index', 'icon' => 'bi-flag', 'label' => 'Flagged Content'],
+                            ['pattern' => 'admin.exports.*', 'route' => 'admin.exports.index', 'icon' => 'bi-file-earmark-bar-graph', 'label' => 'Reports & Export'],
                             ['pattern' => 'admin.logs.*', 'route' => 'admin.logs.index', 'icon' => 'bi-journal-text', 'label' => 'Admin Logs'],
                         ] as $link)
                             <li class="nav-item">

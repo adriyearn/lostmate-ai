@@ -4,15 +4,19 @@ namespace App\Notifications;
 
 use App\Models\Report;
 use App\Models\User;
+use App\Notifications\Concerns\AlsoSendsEmail;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class ReportActionTaken extends Notification
+class ReportActionTaken extends Notification implements ShouldQueue
 {
+    use AlsoSendsEmail;
+
     public function __construct(public Report $report) {}
 
-    public function via(User $notifiable): array
+    protected function mailSubject(): string
     {
-        return ['database'];
+        return 'Your report was reviewed';
     }
 
     public function toArray(User $notifiable): array

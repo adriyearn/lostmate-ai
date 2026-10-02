@@ -12,6 +12,7 @@ use App\Notifications\NewPossibleMatch;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 
 class MatchingService
@@ -90,7 +91,7 @@ class MatchingService
                 ->whereIn('category_id', $categoryIds)
                 ->whereIn('status', [ItemStatus::Open, ItemStatus::Matched])
                 ->whereBetween('date_found', [$anchorDate->copy()->subDays($windowDays), $anchorDate->copy()->addDays($windowDays)])
-                ->with('category')
+                ->with(['category', 'images'])
                 ->latest('date_found')
                 ->take($limit)
                 ->get();
@@ -102,7 +103,7 @@ class MatchingService
             ->whereIn('category_id', $categoryIds)
             ->whereIn('status', [ItemStatus::Open, ItemStatus::Matched])
             ->whereBetween('date_lost', [$anchorDate->copy()->subDays($windowDays), $anchorDate->copy()->addDays($windowDays)])
-            ->with('category')
+            ->with(['category', 'images'])
             ->latest('date_lost')
             ->take($limit)
             ->get();
@@ -137,7 +138,7 @@ class MatchingService
                     'response_format' => ['type' => 'json_object'],
                     'messages' => [
                         ['role' => 'system', 'content' => $this->systemPrompt()],
-                        ['role' => 'user', 'content' => $this->buildPrompt($item, $candidates)],
+                        ['role' => 'user', 'content' => $this->buildUserContent($item, $candidates)],
                     ],
                 ]);
 
@@ -206,7 +207,7 @@ class MatchingService
 
     protected function systemPrompt(): string
     {
-        return <<<'PROMPT'
+        $prompt = <<<'PROMPT'
             You help match lost item reports with found item reports for a school
             lost-and-found system. Given one report and a list of candidate reports
             of the opposite type, decide which candidates plausibly describe the
@@ -236,6 +237,71 @@ class MatchingService
             fence, do not add any explanation before or after it, and do not
             repeat these instructions.
             PROMPT;
+
+        // Extra rules, only when photo matching is switched on.
+        if (config('matching.use_photos')) {
+            $prompt .= "\n\n".<<<'PHOTOS'
+                Some reports include a photo, labelled with its candidate_id. Use photos
+                only to compare the kind of object, its color, and visible marks or
+                damage. Photos can override a vague text description, but never
+                mention, read, or repeat any personal information visible in a photo
+                (names, ID numbers, faces).
+                PHOTOS;
+        }
+
+        return $prompt;
+    }
+
+    /**
+     * The user message: plain text, or - when photo matching is switched on -
+     * the same text followed by one photo per report, each labelled with the
+     * candidate_id it belongs to (OpenAI's multi-part message format).
+     */
+    protected function buildUserContent(LostItem|FoundItem $item, Collection $candidates): string|array
+    {
+        $text = $this->buildPrompt($item, $candidates);
+
+        if (! config('matching.use_photos')) {
+            return $text;
+        }
+
+        $parts = [['type' => 'text', 'text' => $text]];
+
+        $reportPhoto = $this->photoDataUrl($item);
+        if ($reportPhoto) {
+            $parts[] = ['type' => 'text', 'text' => 'Photo of the '.($item instanceof LostItem ? 'LOST' : 'FOUND').' report:'];
+            $parts[] = ['type' => 'image_url', 'image_url' => ['url' => $reportPhoto, 'detail' => 'low']];
+        }
+
+        foreach ($candidates as $candidate) {
+            $photo = $this->photoDataUrl($candidate);
+            if ($photo) {
+                $parts[] = ['type' => 'text', 'text' => "Photo of candidate_id {$candidate->id}:"];
+                $parts[] = ['type' => 'image_url', 'image_url' => ['url' => $photo, 'detail' => 'low']];
+            }
+        }
+
+        // No photos anywhere: send plain text like normal.
+        return count($parts) === 1 ? $text : $parts;
+    }
+
+    /**
+     * The report's first photo as a base64 "data:" URL, read from the public
+     * disk. Returns null if there's no photo, the file is missing, or it's
+     * too large - matching then simply uses the text for that report.
+     */
+    protected function photoDataUrl(LostItem|FoundItem $item): ?string
+    {
+        $image = $item->images->first();
+        $disk = Storage::disk('public');
+
+        if (! $image || ! $disk->exists($image->path) || $disk->size($image->path) > config('matching.max_photo_bytes')) {
+            return null;
+        }
+
+        $mime = $disk->mimeType($image->path) ?: 'image/jpeg';
+
+        return 'data:'.$mime.';base64,'.base64_encode($disk->get($image->path));
     }
 
     protected function buildPrompt(LostItem|FoundItem $item, Collection $candidates): string

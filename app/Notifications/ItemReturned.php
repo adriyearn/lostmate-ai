@@ -4,15 +4,19 @@ namespace App\Notifications;
 
 use App\Models\Claim;
 use App\Models\User;
+use App\Notifications\Concerns\AlsoSendsEmail;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class ItemReturned extends Notification
+class ItemReturned extends Notification implements ShouldQueue
 {
+    use AlsoSendsEmail;
+
     public function __construct(public Claim $claim) {}
 
-    public function via(User $notifiable): array
+    protected function mailSubject(): string
     {
-        return ['database'];
+        return 'Your item was returned';
     }
 
     public function toArray(User $notifiable): array

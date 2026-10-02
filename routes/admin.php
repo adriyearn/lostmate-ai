@@ -4,12 +4,14 @@ use App\Http\Controllers\Admin\AdminLogController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ClaimController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ExportController;
 use App\Http\Controllers\Admin\FlaggedContentController;
 use App\Http\Controllers\Admin\ItemReportController;
+use App\Http\Controllers\Admin\OfficeController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
@@ -42,4 +44,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/flags/{report}/status', [FlaggedContentController::class, 'updateStatus'])->name('flags.update-status');
 
     Route::get('/logs', [AdminLogController::class, 'index'])->name('logs.index');
+
+    Route::get('/office', [OfficeController::class, 'index'])->name('office.index');
+    Route::post('/office/receive/{foundItem}', [OfficeController::class, 'receive'])->name('office.receive');
+    Route::post('/office/close-unclaimed/{foundItem}', [OfficeController::class, 'closeUnclaimed'])->name('office.close-unclaimed');
+
+    Route::get('/exports', [ExportController::class, 'index'])->name('exports.index');
+    Route::get('/exports/csv', [ExportController::class, 'csv'])->middleware('throttle:10,1')->name('exports.csv');
 });

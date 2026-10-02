@@ -9,6 +9,14 @@
         found it.
     </div>
 
+    @if ($foundItem->isAtOffice())
+        <div class="alert alert-secondary small">
+            <i class="bi bi-building"></i>
+            This item is at the <strong>{{ config('lostmate.office.name') }}</strong>. Office staff will review your claim,
+            and you'll collect it there with your pickup code.
+        </div>
+    @endif
+
     <div class="card">
         <div class="card-body">
             <form method="POST" action="{{ route('claims.store', $foundItem) }}" enctype="multipart/form-data">
@@ -24,7 +32,7 @@
 
                 <div class="mb-3">
                     <x-input-label for="proof_image" value="Proof Photo (optional)" />
-                    <input id="proof_image" type="file" name="proof_image" class="form-control" accept="image/png,image/jpeg,image/webp">
+                    <input id="proof_image" type="file" name="proof_image" class="form-control" accept="image/png,image/jpeg,image/webp" data-lm-images>
                     <p class="form-text">e.g. an old photo showing you with the item.</p>
                     <x-input-error :messages="$errors->get('proof_image')" />
                 </div>

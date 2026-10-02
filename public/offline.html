@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#1a1917">
+    <title>You're offline | LostMate AI</title>
+    <!-- Self-contained on purpose: this page is shown when the network is down. -->
+    <style>
+        :root { --ink: #1a1917; --paper: #f7f3eb; --surface: #fffdf8; --muted: #6f6a5f; --brand: #ff6a2b; }
+        @media (prefers-color-scheme: dark) {
+            :root { --ink: #f1ece1; --paper: #121110; --surface: #1b1a17; --muted: #9d9688; }
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            padding: 24px; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+            color: var(--ink); background: var(--paper);
+            background-image: radial-gradient(rgba(128, 120, 105, 0.15) 1px, transparent 1.2px);
+            background-size: 22px 22px; text-align: center;
+        }
+        .tag {
+            display: inline-block; position: relative; padding: 18px 28px 18px 48px; margin-bottom: 28px;
+            background: var(--surface); border: 2px solid var(--ink); border-radius: 8px 20px 20px 8px;
+            box-shadow: 6px 6px 0 var(--brand); transform: rotate(-4deg);
+            font-family: ui-monospace, Consolas, monospace; font-weight: 700; letter-spacing: .08em;
+        }
+        .tag::before {
+            content: ''; position: absolute; left: 16px; top: 50%; width: 14px; height: 14px; margin-top: -7px;
+            border-radius: 50%; border: 2px solid var(--ink);
+        }
+        h1 { margin: 0 0 8px; font-size: 1.6rem; letter-spacing: -.02em; }
+        p { margin: 0 0 24px; color: var(--muted); max-width: 26rem; }
+        button {
+            font: inherit; font-weight: 700; color: #1a1917; background: var(--brand); cursor: pointer;
+            border: 1.5px solid var(--ink); border-radius: 12px; padding: 10px 20px; box-shadow: 3px 3px 0 var(--ink);
+        }
+        button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="tag">STATUS: OFFLINE</div>
+        <h1>You're offline</h1>
+        <p>LostMate AI needs an internet connection to load your reports, matches, and messages. Check your Wi-Fi or data, then try again.</p>
+        <button type="button" onclick="location.reload()">Try again</button>
+    </main>
+</body>
+</html>

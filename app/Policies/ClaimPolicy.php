@@ -22,11 +22,20 @@ class ClaimPolicy
     }
 
     /**
-     * Approve, reject, or confirm-returned: only the finder (the found
-     * item's reporter).
+     * Only the claimant can cancel their own claim.
+     */
+    public function cancel(User $user, Claim $claim): bool
+    {
+        return $user->id === $claim->claimant_id;
+    }
+
+    /**
+     * Approve, reject, or confirm-returned: the finder (the found item's
+     * reporter) - unless the item was turned in at the office, in which
+     * case only office staff (admins, via before()) handle it.
      */
     public function review(User $user, Claim $claim): bool
     {
-        return $user->id === $claim->foundItem->user_id;
+        return $user->id === $claim->foundItem->user_id && ! $claim->foundItem->isAtOffice();
     }
 }

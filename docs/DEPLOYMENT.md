@@ -67,7 +67,25 @@ QUEUE_CONNECTION=database
 CACHE_STORE=database
 FILESYSTEM_DISK=local
 
-MAIL_MAILER=log
+# Email - needed for verification links and match/claim alerts.
+# Example uses a Gmail "App password" (Google Account > Security > App passwords).
+# Any SMTP provider works (Mailtrap, Brevo, your school's mail server).
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_SCHEME=null
+MAIL_USERNAME=your.address@gmail.com
+MAIL_PASSWORD=your-16-character-app-password
+MAIL_FROM_ADDRESS=your.address@gmail.com
+MAIL_FROM_NAME="LostMate AI"
+
+# Only school emails can register (comma-separated). Leave empty to allow any.
+SCHOOL_EMAIL_DOMAINS=school.edu.ph
+
+# New users must click an emailed link before using the app. If the MAIL_*
+# settings above aren't working yet, set this to false - otherwise new users
+# never receive their link and are stuck on "Check your inbox".
+REQUIRE_EMAIL_VERIFICATION=true
 
 # AI matching - pick ONE of these two blocks:
 
@@ -80,6 +98,12 @@ OPENAI_MODEL=gpt-4o-mini
 # AI_MATCHING_FAKE=false
 # OPENAI_API_KEY=sk-...
 # OPENAI_MODEL=gpt-4o-mini
+# AI_MATCHING_PHOTOS=true   # optional: AI also compares item photos (a bit more per run)
+
+# Lost & found office, and how long before unclaimed items can be donated/disposed.
+LOSTMATE_OFFICE_NAME="Guidance Office"
+LOSTMATE_OFFICE_HOURS="Mon-Fri, 8:00 AM - 5:00 PM"
+LOSTMATE_UNCLAIMED_AFTER_DAYS=60
 
 VITE_APP_NAME=LostMate AI
 ```
@@ -133,7 +157,8 @@ next time you push a change.
    ```
 3. **Variables** → click **Add Reference** (or copy the same list from
    `web`) - the worker needs the same `DB_*`, `APP_KEY`, `OPENAI_*`,
-   `AI_MATCHING_FAKE` variables as `web` to do its job. It does **not**
+   `AI_MATCHING_FAKE`, and `MAIL_*` variables as `web` to do its job
+   (the worker is what actually sends emails). It does **not**
    need the storage volume (it never touches uploaded files).
 
 ## 8. Add the `scheduler` service
@@ -157,11 +182,15 @@ matching flow.
 
 ## 10. Final checklist before your demo
 
-- [ ] Visit `https://your-app.up.railway.app` - should show the login page.
+- [ ] Visit `https://your-app.up.railway.app` - should show the LostMate landing page.
 - [ ] Register an account, report a lost item with a photo, confirm the
       photo actually displays (proves the volume is mounted correctly).
 - [ ] Check the `worker` service's logs - a `RunItemMatching` job should
       appear and complete shortly after you submit a report.
+- [ ] Register with a real school email and confirm the verification
+      email arrives (check spam). If it doesn't, check the `worker` logs
+      for a mail error, and set `REQUIRE_EMAIL_VERIFICATION=false` on
+      `web` until it's fixed so new users aren't locked out.
 - [ ] Log in as the seeded `admin@lostmate.test` account (if you seeded)
       and confirm `/admin` loads.
 - [ ] `GET /up` should return a 200 - Railway uses this as the health

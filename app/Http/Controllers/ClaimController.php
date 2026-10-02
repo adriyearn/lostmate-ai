@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\ItemStatus;
 use App\Exceptions\InvalidStatusTransitionException;
 use App\Http\Requests\ApproveClaimRequest;
+use App\Http\Requests\ConfirmReturnedRequest;
 use App\Http\Requests\RejectClaimRequest;
 use App\Http\Requests\StoreClaimRequest;
 use App\Models\Claim;
@@ -75,11 +76,29 @@ class ClaimController extends Controller
         return back()->with('success', 'Claim rejected.');
     }
 
-    public function confirmReturned(Request $request, Claim $claim): RedirectResponse
+    public function cancel(Claim $claim): RedirectResponse
     {
-        $this->authorize('review', $claim);
+        $this->authorize('cancel', $claim);
 
-        $this->claims->confirmReturned($claim);
+        try {
+            $this->claims->cancel($claim);
+        } catch (InvalidStatusTransitionException $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return back()->with('success', 'Your claim was cancelled.');
+    }
+
+    /**
+     * Authorization and the pickup-code check happen in ConfirmReturnedRequest.
+     */
+    public function confirmReturned(ConfirmReturnedRequest $request, Claim $claim): RedirectResponse
+    {
+        try {
+            $this->claims->confirmReturned($claim);
+        } catch (InvalidStatusTransitionException $e) {
+            return back()->with('error', $e->getMessage());
+        }
 
         return back()->with('success', 'Marked as returned. Thanks for helping reunite it with its owner!');
     }

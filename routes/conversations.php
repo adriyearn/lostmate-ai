@@ -5,7 +5,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/messages', [ConversationController::class, 'index'])->name('conversations.index');
     Route::get('/messages/{conversation}', [ConversationController::class, 'show'])->name('conversations.show');
     Route::post('/messages/{conversation}', [ConversationController::class, 'storeMessage'])->middleware('throttle:30,1')->name('conversations.store-message');

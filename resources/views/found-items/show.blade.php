@@ -12,6 +12,9 @@
                 </div>
             </div>
             <div class="d-flex align-items-center gap-2">
+                @if ($foundItem->isAtOffice())
+                    <span class="badge text-bg-dark"><i class="bi bi-building"></i> At the office</span>
+                @endif
                 <x-status-badge :status="$foundItem->status" />
                 <x-report-button :action="route('found-items.report', $foundItem)" id="reportFoundItemModal" />
             </div>
@@ -90,10 +93,10 @@
             </div>
 
             @can('viewHiddenDetails', $foundItem)
-                <div class="card mb-3" style="border-color: #fde68a; background: #fffbeb;">
+                <div class="card mb-3 lm-secret">
                     <div class="card-body">
                         <h2 class="lm-section-title mb-1" style="font-size: 1rem;">
-                            <i class="bi bi-eye-slash" style="color:#d97706;"></i> Hidden Details
+                            <i class="bi bi-eye-slash"></i> Hidden Details
                             <span class="badge text-bg-warning">Private</span>
                         </h2>
                         <p class="small text-muted mb-2">Only you and administrators can see this. Use it to verify claims.</p>
@@ -101,6 +104,29 @@
                     </div>
                 </div>
             @endcan
+
+            @if ($foundItem->isAtOffice())
+                {{-- Everyone sees where the item is and who handles it now. --}}
+                <div class="alert alert-secondary small mb-3">
+                    <i class="bi bi-building"></i>
+                    This item is being held at the <strong>{{ config('lostmate.office.name') }}</strong>
+                    ({{ config('lostmate.office.hours') }}). Office staff review claims and hand it over.
+                </div>
+            @elseif (auth()->id() === $foundItem->user_id && ! in_array($foundItem->status, [App\Enums\ItemStatus::Returned, App\Enums\ItemStatus::Closed], true))
+                <div class="alert alert-secondary small mb-3">
+                    <i class="bi bi-building"></i>
+                    Can't hand it over yourself? Bring it to the <strong>{{ config('lostmate.office.name') }}</strong>
+                    ({{ config('lostmate.office.hours') }}). Staff will mark it received and take over the claims.
+                </div>
+            @endif
+
+            @if (auth()->user()->isAdmin() && ! $foundItem->isAtOffice() && ! in_array($foundItem->status, [App\Enums\ItemStatus::Returned, App\Enums\ItemStatus::Closed], true))
+                <form method="POST" action="{{ route('admin.office.receive', $foundItem) }}" class="d-grid mb-3"
+                      onsubmit="return confirm('Confirm the finder handed this item in at the office?');">
+                    @csrf
+                    <button type="submit" class="btn btn-dark"><i class="bi bi-building-check"></i> Mark as received at office</button>
+                </form>
+            @endif
 
             <div class="card">
                 <div class="card-body d-grid gap-2">
@@ -135,7 +161,7 @@
                         <div class="d-flex gap-2 flex-wrap">
                             <a href="{{ route('found-items.edit', $foundItem) }}" class="btn btn-outline-secondary flex-fill"><i class="bi bi-pencil"></i> Edit</a>
 
-                            @if ($foundItem->status === App\Enums\ItemStatus::Open)
+                            @if ($foundItem->status === App\Enums\ItemStatus::Open && auth()->user()->can('delete', $foundItem))
                                 <form method="POST" action="{{ route('found-items.withdraw', $foundItem) }}" class="flex-fill d-grid"
                                       onsubmit="return confirm('Withdraw and close this report?');">
                                     @csrf
@@ -143,12 +169,14 @@
                                 </form>
                             @endif
 
-                            <form method="POST" action="{{ route('found-items.destroy', $foundItem) }}" class="flex-fill d-grid"
-                                  onsubmit="return confirm('Delete this found item report? This cannot be undone.');">
-                                @csrf
-                                @method('DELETE')
-                                <x-danger-button><i class="bi bi-trash"></i> Delete</x-danger-button>
-                            </form>
+                            @can('delete', $foundItem)
+                                <form method="POST" action="{{ route('found-items.destroy', $foundItem) }}" class="flex-fill d-grid"
+                                      onsubmit="return confirm('Delete this found item report? This cannot be undone.');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <x-danger-button><i class="bi bi-trash"></i> Delete</x-danger-button>
+                                </form>
+                            @endcan
                         </div>
 
                         @can('rerunMatching', $foundItem)

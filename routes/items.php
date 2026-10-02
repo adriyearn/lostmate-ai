@@ -5,13 +5,15 @@ use App\Http\Controllers\BrowseController;
 use App\Http\Controllers\FoundItemController;
 use App\Http\Controllers\LostItemController;
 use App\Http\Controllers\MyReportsController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/password', [PasswordController::class, 'update'])->middleware('throttle:6,1')->name('password.update');
 
     Route::get('/browse', [BrowseController::class, 'index'])->name('browse.index');
 

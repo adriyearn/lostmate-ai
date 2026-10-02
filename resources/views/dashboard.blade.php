@@ -1,16 +1,28 @@
 <x-app-layout>
     <section class="lm-hero mt-4 mb-4">
-        <div class="d-flex flex-wrap justify-content-between align-items-end gap-4">
-            <div style="max-width: 36rem;">
-                <span class="badge rounded-pill mb-3" style="background: rgba(255,255,255,.18); color:#fff;">
-                    <i class="bi bi-stars"></i> {{ auth()->user()->role->label() }}
-                </span>
-                <h1 class="mb-2">Hi {{ \Illuminate\Support\Str::of(auth()->user()->name)->before(' ') }}, welcome back</h1>
-                <p class="mb-0">Report what you lost or found. Our AI compares every new report and suggests likely matches for you.</p>
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-7">
+                <div class="lm-mono lm-hero-eyebrow mb-3">
+                    {{ auth()->user()->role->label() }} &middot; {{ now()->format('l, M j') }}
+                </div>
+                <h1 class="mb-3">
+                    Hi {{ \Illuminate\Support\Str::of(auth()->user()->name)->before(' ') }}.<br>
+                    Let's get things <span class="lm-mark">back home.</span>
+                </h1>
+                <p class="mb-4" style="max-width: 32rem;">Report what you lost or found. Our AI compares every new report and suggests likely matches for you.</p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{{ route('lost-items.create') }}" class="btn btn-light btn-lg"><i class="bi bi-exclamation-circle"></i> I lost something</a>
+                    <a href="{{ route('found-items.create') }}" class="btn btn-ghost btn-lg"><i class="bi bi-box-seam"></i> I found something</a>
+                </div>
             </div>
-            <div class="d-flex flex-wrap gap-2">
-                <a href="{{ route('lost-items.create') }}" class="btn btn-light btn-lg"><i class="bi bi-exclamation-circle"></i> I lost something</a>
-                <a href="{{ route('found-items.create') }}" class="btn btn-ghost btn-lg"><i class="bi bi-box-seam"></i> I found something</a>
+
+            {{-- A short "how it works" strip, shown on larger screens only. --}}
+            <div class="col-lg-5 d-none d-lg-flex justify-content-end">
+                <div class="lm-steps">
+                    <div class="lm-step"><span class="lm-step-num">01</span><div>Report it<small>Lost or found, with photos</small></div></div>
+                    <div class="lm-step"><span class="lm-step-num">02</span><div>AI suggests matches<small>Checked in the background</small></div></div>
+                    <div class="lm-step"><span class="lm-step-num">03</span><div>Verify &amp; return<small>Private details prove ownership</small></div></div>
+                </div>
             </div>
         </div>
     </section>

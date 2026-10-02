@@ -158,7 +158,9 @@ class ClaimTest extends TestCase
             'status' => ClaimStatus::Approved,
         ]);
 
-        $response = $this->actingAs($finder)->post(route('claims.confirm-returned', $claim));
+        $response = $this->actingAs($finder)->post(route('claims.confirm-returned', $claim), [
+            'pickup_code' => $claim->pickupCode(),
+        ]);
 
         $response->assertRedirect();
         $this->assertSame(ClaimStatus::Completed, $claim->fresh()->status);

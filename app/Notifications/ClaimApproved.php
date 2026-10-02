@@ -4,15 +4,19 @@ namespace App\Notifications;
 
 use App\Models\Claim;
 use App\Models\User;
+use App\Notifications\Concerns\AlsoSendsEmail;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class ClaimApproved extends Notification
+class ClaimApproved extends Notification implements ShouldQueue
 {
+    use AlsoSendsEmail;
+
     public function __construct(public Claim $claim) {}
 
-    public function via(User $notifiable): array
+    protected function mailSubject(): string
     {
-        return ['database'];
+        return 'Your claim was approved';
     }
 
     public function toArray(User $notifiable): array
@@ -21,7 +25,7 @@ class ClaimApproved extends Notification
 
         return [
             'claim_id' => $this->claim->id,
-            'message' => "Your claim on \"{$this->claim->foundItem->item_name}\" was approved. Coordinate with the finder to get it back.",
+            'message' => "Your claim on \"{$this->claim->foundItem->item_name}\" was approved. Open My Claims to see your pickup code, then message the finder to arrange the handover.",
             'link' => route('my-claims.index'),
         ];
     }

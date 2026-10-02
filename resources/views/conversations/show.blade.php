@@ -24,13 +24,13 @@
 
     <div class="card mb-3">
         <div class="card-body">
-            <div id="messages" class="d-flex flex-column gap-2 mb-3" style="max-height: 28rem; overflow-y: auto;"
+            <div id="messages" class="d-flex flex-column gap-2 mb-3 lm-chat"
                  data-conversation-id="{{ $conversation->id }}"
                  data-poll-url="{{ route('conversations.poll', $conversation) }}"
                  data-current-user-id="{{ auth()->id() }}">
                 @foreach ($conversation->messages as $message)
                     <div class="d-flex {{ $message->sender_id === auth()->id() ? 'justify-content-end' : 'justify-content-start' }}" data-message-id="{{ $message->id }}">
-                        <div class="p-2 rounded {{ $message->sender_id === auth()->id() ? 'bg-primary text-white' : 'bg-body-secondary' }}" style="max-width: 75%;">
+                        <div class="lm-bubble {{ $message->sender_id === auth()->id() ? 'lm-bubble-mine' : '' }}">
                             @if ($message->sender_id !== auth()->id())
                                 <div class="small fw-semibold">{{ $message->sender->name }}</div>
                             @endif
@@ -55,7 +55,7 @@
                 @csrf
                 <div class="input-group">
                     <input type="text" name="body" class="form-control" placeholder="Type a message..." maxlength="2000" required autofocus>
-                    <button type="submit" class="btn btn-primary">Send</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-send"></i> Send</button>
                 </div>
             </form>
         </div>
@@ -134,7 +134,7 @@
                 wrapper.setAttribute('data-message-id', message.id);
 
                 wrapper.innerHTML =
-                    '<div class="p-2 rounded ' + (isMine ? 'bg-primary text-white' : 'bg-body-secondary') + '" style="max-width: 75%;">' +
+                    '<div class="lm-bubble' + (isMine ? ' lm-bubble-mine' : '') + '">' +
                         (isMine ? '' : '<div class="small fw-semibold">' + escapeHtml(message.sender_name) + '</div>') +
                         '<div>' + escapeHtml(message.body) + '</div>' +
                         '<div class="d-flex justify-content-between align-items-center gap-2 mt-1">' +

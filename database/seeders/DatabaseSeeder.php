@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => UserRole::Admin,
             'is_active' => true,
+            'email_verified_at' => now(),
         ]);
 
         $studentStaff = [
@@ -40,6 +41,7 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role' => UserRole::StudentStaff,
                 'is_active' => true,
+                'email_verified_at' => now(),
             ]);
         }
 
