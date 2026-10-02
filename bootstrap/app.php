@@ -12,6 +12,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Hosts like Railway put the app behind a proxy that handles HTTPS.
+        // Trusting it lets Laravel know the visitor used https://, so asset
+        // URLs and signed email links are generated as https too.
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
         ]);
