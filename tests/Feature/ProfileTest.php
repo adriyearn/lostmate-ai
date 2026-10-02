@@ -45,4 +45,27 @@ class ProfileTest extends TestCase
 
         $response->assertDontSee('09171234567');
     }
+
+    public function test_an_uploaded_profile_photo_is_used_as_the_avatar(): void
+    {
+        $reporter = User::factory()->create(['name' => 'Ana Garcia']);
+        $reporter->profile->update(['avatar_path' => 'avatars/ana.jpg']);
+        $lostItem = \App\Models\LostItem::factory()->create(['user_id' => $reporter->id]);
+
+        $response = $this->actingAs(User::factory()->create())->get(route('lost-items.show', $lostItem));
+
+        $response->assertOk();
+        $response->assertSee('storage/avatars/ana.jpg', false);
+    }
+
+    public function test_initials_are_shown_when_there_is_no_profile_photo(): void
+    {
+        $reporter = User::factory()->create(['name' => 'Ana Garcia']);
+        $lostItem = \App\Models\LostItem::factory()->create(['user_id' => $reporter->id]);
+
+        $response = $this->actingAs(User::factory()->create())->get(route('lost-items.show', $lostItem));
+
+        $response->assertOk();
+        $response->assertSee('>AG</span>', false);
+    }
 }

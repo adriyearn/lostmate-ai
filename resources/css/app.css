@@ -183,7 +183,15 @@ code { color: var(--lm-brand-dark); background: var(--lm-brand-soft); padding: 0
     flex-shrink: 0;
 }
 
+.lm-avatar-sm { width: 28px; height: 28px; font-size: 0.7rem; }
 .lm-avatar-lg { width: 48px; height: 48px; font-size: 1.05rem; }
+.lm-avatar-xl { width: 112px; height: 112px; font-size: 2.25rem; }
+
+.lm-avatar-img {
+    object-fit: cover;
+    background: var(--lm-soft);
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(99, 102, 241, 0.25);
+}
 
 .navbar-toggler { border: 1px solid var(--lm-line); border-radius: 10px; }
 .navbar-toggler:focus { box-shadow: none; }

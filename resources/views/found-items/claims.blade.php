@@ -18,7 +18,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
                         <div>
-                            <span class="fw-semibold">{{ $claim->claimant->name }}</span>
+                            <span class="d-inline-flex align-items-center gap-2"><x-avatar :user="$claim->claimant" size="sm" /><span class="fw-semibold">{{ $claim->claimant->name }}</span></span>
                             <span class="badge {{ $claim->status->badgeClass() }} ms-1">{{ $claim->status->label() }}</span>
                             <div class="small text-muted">Submitted {{ $claim->created_at->format('M j, Y g:i A') }}</div>
                         </div>

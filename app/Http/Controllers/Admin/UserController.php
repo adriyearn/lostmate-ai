@@ -17,7 +17,7 @@ class UserController extends Controller
 
     public function index(Request $request): View
     {
-        $users = User::query()
+        $users = User::query()->with('profile')
             ->when($request->query('q'), function ($query, $q) {
                 $query->where(function ($q2) use ($q) {
                     $q2->where('name', 'like', "%{$q}%")

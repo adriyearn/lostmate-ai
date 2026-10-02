@@ -1,21 +1,24 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="h4 mb-0">{{ $otherUser->name }}</h1>
-                @if ($conversation->lostItem || $conversation->foundItem)
-                    <p class="small text-muted mb-0">
-                        About:
-                        @if ($conversation->lostItem)
-                            <a href="{{ route('lost-items.show', $conversation->lostItem) }}">{{ $conversation->lostItem->item_name }}</a>
-                        @endif
-                        @if ($conversation->foundItem)
-                            <a href="{{ route('found-items.show', $conversation->foundItem) }}">{{ $conversation->foundItem->item_name }}</a>
-                        @endif
-                    </p>
-                @endif
+        <div class="d-flex justify-content-between align-items-center gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <x-avatar :user="$otherUser" size="lg" />
+                <div>
+                    <h1 class="h4 mb-0">{{ $otherUser->name }}</h1>
+                    @if ($conversation->lostItem || $conversation->foundItem)
+                        <p class="small text-muted mb-0">
+                            About:
+                            @if ($conversation->lostItem)
+                                <a href="{{ route('lost-items.show', $conversation->lostItem) }}">{{ $conversation->lostItem->item_name }}</a>
+                            @endif
+                            @if ($conversation->foundItem)
+                                <a href="{{ route('found-items.show', $conversation->foundItem) }}">{{ $conversation->foundItem->item_name }}</a>
+                            @endif
+                        </p>
+                    @endif
+                </div>
             </div>
-            <a href="{{ route('conversations.index') }}" class="btn btn-sm btn-outline-secondary">&larr; Inbox</a>
+            <a href="{{ route('conversations.index') }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i> Inbox</a>
         </div>
     </x-slot>
 

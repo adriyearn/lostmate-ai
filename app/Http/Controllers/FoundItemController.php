@@ -45,7 +45,7 @@ class FoundItemController extends Controller
     {
         $this->authorize('view', $foundItem);
 
-        $foundItem->load(['user', 'category', 'images']);
+        $foundItem->load(['user.profile', 'category', 'images']);
 
         return view('found-items.show', ['foundItem' => $foundItem]);
     }
@@ -123,7 +123,7 @@ class FoundItemController extends Controller
         $this->authorize('update', $foundItem);
 
         $claims = $foundItem->claims()
-            ->with(['claimant', 'lostItem'])
+            ->with(['claimant.profile', 'lostItem'])
             ->latest()
             ->get();
 

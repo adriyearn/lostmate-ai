@@ -133,7 +133,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link d-flex align-items-center gap-2" href="#" id="userMenu" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <span class="lm-avatar">{{ auth()->user()->initials() }}</span>
+                            <x-avatar :user="auth()->user()" />
                             <span class="d-lg-none">{{ auth()->user()->name }}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">

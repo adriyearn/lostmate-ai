@@ -1,10 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
-        <h1 class="h4 mb-0">Inbox</h1>
+        <h1>Messages</h1>
+        <p class="text-muted mb-0 mt-1">Talk to finders and owners without sharing your contact details.</p>
     </x-slot>
 
     @if ($conversations->isEmpty())
-        <p class="text-muted">No conversations yet. Start one from an item page or a possible match.</p>
+        <div class="card">
+            <div class="lm-empty">
+                <i class="bi bi-chat-dots"></i>
+                <div class="fw-semibold text-dark mb-1">No conversations yet</div>
+                <div class="small">Start one from an item page or a possible match.</div>
+            </div>
+        </div>
     @else
         <div class="list-group">
             @foreach ($conversations as $conversation)
@@ -15,25 +22,29 @@
                     $relatedItem = $conversation->lostItem ?? $conversation->foundItem;
                 @endphp
                 <a href="{{ route('conversations.show', $conversation) }}"
-                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-start gap-2">
-                    <div>
-                        <div class="fw-semibold">
-                            {{ $other->name }}
-                            @if ($relatedItem)
-                                <span class="text-muted fw-normal">&middot; {{ $relatedItem->item_name }}</span>
+                   class="list-group-item list-group-item-action d-flex align-items-center gap-3">
+                    <x-avatar :user="$other" size="lg" />
+                    <div class="flex-grow-1 min-w-0" style="min-width: 0;">
+                        <div class="d-flex justify-content-between align-items-center gap-2">
+                            <span class="fw-bold text-dark text-truncate">{{ $other->name }}</span>
+                            @if ($conversation->last_message_at)
+                                <span class="small text-muted text-nowrap">{{ $conversation->last_message_at->diffForHumans() }}</span>
                             @endif
                         </div>
-                        <div class="small text-muted text-truncate" style="max-width: 40rem;">
+                        @if ($relatedItem)
+                            <div class="small fw-semibold" style="color: var(--lm-brand-dark);"><i class="bi bi-tag"></i> {{ $relatedItem->item_name }}</div>
+                        @endif
+                        <div class="small text-muted text-truncate">
                             {{ $lastMessage?->body ?? 'No messages yet.' }}
                         </div>
                     </div>
                     @if ($unread > 0)
-                        <span class="badge text-bg-primary rounded-pill">{{ $unread }}</span>
+                        <span class="lm-dot position-static">{{ $unread }}</span>
                     @endif
                 </a>
             @endforeach
         </div>
 
-        {{ $conversations->links() }}
+        <div class="mt-3">{{ $conversations->links() }}</div>
     @endif
 </x-app-layout>

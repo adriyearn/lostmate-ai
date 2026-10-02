@@ -1,6 +1,6 @@
 <x-admin-layout>
     <x-slot name="header">
-        <h1 class="h4 mb-0">{{ $user->name }}</h1>
+        <div class="d-flex align-items-center gap-3"><x-avatar :user="$user" size="lg" /><h1 class="h4 mb-0">{{ $user->name }}</h1></div>
     </x-slot>
 
     <div class="row">

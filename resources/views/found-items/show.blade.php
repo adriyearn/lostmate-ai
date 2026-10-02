@@ -80,7 +80,7 @@
                     <hr class="my-4">
 
                     <div class="d-flex align-items-center gap-3">
-                        <span class="lm-avatar">{{ $foundItem->user->initials() }}</span>
+                        <x-avatar :user="$foundItem->user" size="lg" />
                         <div>
                             <div class="small text-muted">Found by</div>
                             <div class="fw-semibold text-dark">{{ $foundItem->user->name }}</div>

@@ -19,7 +19,7 @@ class ConversationController extends Controller
         $user = $request->user();
 
         $conversations = $user->conversations()
-            ->with(['userOne', 'userTwo', 'lostItem', 'foundItem', 'messages' => fn ($q) => $q->latest()->limit(1)])
+            ->with(['userOne.profile', 'userTwo.profile', 'lostItem', 'foundItem', 'messages' => fn ($q) => $q->latest()->limit(1)])
             ->orderByDesc('last_message_at')
             ->paginate(15);
 
@@ -39,7 +39,7 @@ class ConversationController extends Controller
             ->whereNull('read_at')
             ->update(['read_at' => now()]);
 
-        $conversation->load(['userOne', 'userTwo', 'lostItem', 'foundItem', 'messages.sender']);
+        $conversation->load(['userOne.profile', 'userTwo.profile', 'lostItem', 'foundItem', 'messages.sender']);
 
         return view('conversations.show', [
             'conversation' => $conversation,

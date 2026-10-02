@@ -34,7 +34,7 @@
                 <tbody>
                     @foreach ($users as $user)
                         <tr>
-                            <td><a href="{{ route('admin.users.show', $user) }}">{{ $user->name }}</a></td>
+                            <td><a href="{{ route('admin.users.show', $user) }}" class="d-inline-flex align-items-center gap-2 fw-semibold"><x-avatar :user="$user" size="sm" /> {{ $user->name }}</a></td>
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->student_id ?? '—' }}</td>
                             <td>

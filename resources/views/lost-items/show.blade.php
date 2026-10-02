@@ -79,7 +79,7 @@
                     <hr class="my-4">
 
                     <div class="d-flex align-items-center gap-3">
-                        <span class="lm-avatar">{{ $lostItem->user->initials() }}</span>
+                        <x-avatar :user="$lostItem->user" size="lg" />
                         <div>
                             <div class="small text-muted">Reported by</div>
                             <div class="fw-semibold text-dark">{{ $lostItem->user->name }}</div>

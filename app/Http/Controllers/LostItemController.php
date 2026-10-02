@@ -45,7 +45,7 @@ class LostItemController extends Controller
     {
         $this->authorize('view', $lostItem);
 
-        $lostItem->load(['user', 'category', 'images']);
+        $lostItem->load(['user.profile', 'category', 'images']);
 
         return view('lost-items.show', ['lostItem' => $lostItem]);
     }

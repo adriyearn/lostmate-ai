@@ -1,31 +1,25 @@
 <x-app-layout>
     <x-slot name="header">
-        <h1 class="h4 mb-0">My Profile</h1>
+        <h1>My profile</h1>
+        <p class="text-muted mb-0 mt-1">Your photo appears next to your name across LostMate.</p>
     </x-slot>
 
-    <div class="row">
-        <div class="col-md-8">
+    <div class="row g-4">
+        <div class="col-lg-8">
             <div class="card">
                 <div class="card-body">
                     <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
                         @csrf
                         @method('PATCH')
 
-                        <div class="row mb-3">
-                            <div class="col-sm-4">
-                                @if ($profile->avatar_path)
-                                    <img src="{{ asset('storage/'.$profile->avatar_path) }}" alt="Avatar"
-                                         class="rounded-circle mb-2" style="width: 96px; height: 96px; object-fit: cover;">
-                                @else
-                                    <div class="rounded-circle bg-body-secondary d-flex align-items-center justify-content-center mb-2 text-muted"
-                                         style="width: 96px; height: 96px;">
-                                        No avatar
-                                    </div>
-                                @endif
+                        <div class="d-flex flex-wrap align-items-center gap-4 mb-4 pb-4 border-bottom">
+                            <div id="avatarPreview">
+                                <x-avatar :user="auth()->user()" size="xl" />
                             </div>
-                            <div class="col-sm-8">
-                                <x-input-label for="avatar" value="Avatar" />
+                            <div class="flex-grow-1">
+                                <x-input-label for="avatar" value="Profile photo" />
                                 <input id="avatar" type="file" name="avatar" class="form-control" accept="image/png,image/jpeg,image/webp">
+                                <p class="form-text mb-0">JPG, PNG or WEBP, up to 5 MB. A square photo of your face works best.</p>
                                 <x-input-error :messages="$errors->get('avatar')" />
                             </div>
                         </div>
@@ -65,20 +59,45 @@
                             <x-input-error :messages="$errors->get('bio')" />
                         </div>
 
-                        <x-primary-button>Save Profile</x-primary-button>
+                        <x-primary-button><i class="bi bi-check2"></i> Save profile</x-primary-button>
                     </form>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card">
+        <div class="col-lg-4">
+            <div class="card text-center">
                 <div class="card-body">
-                    <h2 class="h6">Account</h2>
-                    <p class="small text-muted mb-1">{{ auth()->user()->name }}</p>
-                    <p class="small text-muted mb-0">{{ auth()->user()->email }}</p>
+                    <div class="d-flex justify-content-center mb-3">
+                        <x-avatar :user="auth()->user()" size="lg" />
+                    </div>
+                    <div class="fw-bold text-dark">{{ auth()->user()->name }}</div>
+                    <div class="small text-muted mb-2">{{ auth()->user()->email }}</div>
+                    <span class="badge text-bg-primary">{{ auth()->user()->role->label() }}</span>
+                    <p class="small text-muted mt-3 mb-0"><i class="bi bi-lock"></i> Your email and contact number are never shown to other users.</p>
                 </div>
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        // Show the chosen photo in the avatar circle right away, before saving.
+        document.getElementById('avatar').addEventListener('change', function (event) {
+            var file = event.target.files[0];
+            if (!file || !file.type.startsWith('image/')) {
+                return;
+            }
+
+            var img = document.createElement('img');
+            img.className = 'lm-avatar lm-avatar-img lm-avatar-xl';
+            img.alt = 'New profile photo preview';
+            img.src = URL.createObjectURL(file);
+
+            var preview = document.getElementById('avatarPreview');
+            preview.innerHTML = '';
+            preview.appendChild(img);
+        });
+    </script>
+    @endpush
 </x-app-layout>
