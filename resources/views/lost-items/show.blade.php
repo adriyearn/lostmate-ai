@@ -91,6 +91,7 @@
             <div class="card">
                 <div class="card-body d-grid gap-2">
                     @can('viewMatches', $lostItem)
+                        <x-matching-status :item="$lostItem" class="mb-0" />
                         <a href="{{ route('lost-items.matches', $lostItem) }}" class="btn btn-primary">
                             <i class="bi bi-stars"></i> View Possible Matches
                         </a>

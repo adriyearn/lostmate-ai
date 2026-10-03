@@ -40,6 +40,14 @@ class OfficeController extends Controller
         ]);
     }
 
+    /**
+     * Printable claim tag with a QR code that opens the item's page.
+     */
+    public function tag(FoundItem $foundItem): View
+    {
+        return view('admin.office.tag', ['foundItem' => $foundItem->load('category')]);
+    }
+
     public function receive(Request $request, FoundItem $foundItem): RedirectResponse
     {
         try {

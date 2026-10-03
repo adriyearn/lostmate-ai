@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\PhotoStorage;
+use App\Http\Requests\DeleteAccountRequest;
 use App\Http\Requests\UpdateProfileRequest;
+use App\Services\AccountDeletionService;
+use App\Services\PhotoStorage;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -31,5 +34,25 @@ class ProfileController extends Controller
         return redirect()
             ->route('profile.edit')
             ->with('success', 'Your profile has been updated.');
+    }
+
+    /**
+     * Permanently delete the signed-in user's account and data.
+     */
+    public function destroy(DeleteAccountRequest $request, AccountDeletionService $deletion): RedirectResponse
+    {
+        $user = $request->user();
+
+        if ($reason = $deletion->blockedReason($user)) {
+            return back()->with('error', $reason);
+        }
+
+        Auth::logout();
+        $deletion->delete($user);
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('home')->with('success', 'Your account and data have been deleted.');
     }
 }

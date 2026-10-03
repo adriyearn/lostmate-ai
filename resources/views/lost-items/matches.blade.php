@@ -12,6 +12,8 @@
         </div>
     </x-slot>
 
+    <x-matching-status :item="$lostItem" class="mb-4" />
+
     <div class="alert alert-info d-flex gap-2 align-items-start">
         <i class="bi bi-info-circle mt-1"></i>
         <div>

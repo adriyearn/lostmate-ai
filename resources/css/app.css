@@ -1483,6 +1483,36 @@ code {
 [data-theme="dark"] .lm-theme-toggle .bi-sun { display: inline-block; }
 [data-theme="dark"] .lm-theme-toggle .bi-moon-stars { display: none; }
 
+/* ---------- Printable QR claim tag (admin/office/tag) ---------- */
+
+.lm-print-tag {
+    position: relative;
+    width: 300px;
+    margin: 0 auto;
+    padding: 2.2rem 1.5rem 1.5rem;
+    text-align: center;
+    background: #fffdf8;
+    color: #1a1917;
+    border: 2px solid #1a1917;
+    border-radius: 14px 14px 22px 22px;
+    box-shadow: var(--lm-hard-lg);
+}
+
+.lm-print-tag-hole {
+    position: absolute;
+    top: 0.7rem;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin-left: -8px;
+    border: 2px solid #1a1917;
+    border-radius: 50%;
+}
+
+.lm-print-tag-number { font-size: 1.6rem; font-weight: 700; letter-spacing: 0.08em; }
+.lm-print-tag #qr { display: flex; justify-content: center; }
+.lm-print-tag .text-muted { color: #6f6a5f !important; }
+
 /* ---------- Printing (admin "Print / Save as PDF") ---------- */
 
 @media print {
@@ -1491,6 +1521,7 @@ code {
     .lm-print-only { display: inline !important; }
     main.col-md-10 { width: 100% !important; flex: 0 0 100% !important; max-width: 100% !important; }
     .card { break-inside: avoid; }
+    .lm-print-tag { box-shadow: none; }
     .lm-fade-in { animation: none !important; }
 }
 

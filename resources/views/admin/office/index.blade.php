@@ -88,6 +88,9 @@
                                         <button type="submit" class="btn btn-sm btn-outline-danger text-nowrap">Close</button>
                                     </form>
                                 @else
+                                    <a href="{{ route('admin.office.tag', $item) }}" class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-qr-code"></i> Tag
+                                    </a>
                                     <a href="{{ route('found-items.claims', $item) }}" class="btn btn-sm btn-outline-secondary">
                                         <i class="bi bi-patch-check"></i> Claims
                                     </a>

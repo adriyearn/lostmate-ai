@@ -59,5 +59,6 @@
 
     <p class="mb-0 mt-4 small text-center text-muted">
         Already have an account? <a href="{{ route('login') }}" class="fw-semibold">Log in</a>
+        <div class="small text-muted mt-2">By creating an account you agree to our <a href="{{ route('privacy') }}">privacy notice</a>.</div>
     </p>
 </x-guest-layout>

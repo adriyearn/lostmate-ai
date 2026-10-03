@@ -32,11 +32,12 @@ class DashboardController extends Controller
                 'pendingFlags' => Report::where('status', ReportStatus::Pending)->count(),
                 'recoveryRate' => $summary->recoveryRate(),
             ],
-            'chartData' => $this->monthlyReportCounts(),
+            'chartData' => $this->monthlyReportCounts($summary),
+            'health' => SystemController::health(),
         ]);
     }
 
-    protected function monthlyReportCounts(): array
+    protected function monthlyReportCounts(ReportSummaryService $summary): array
     {
         $months = collect(range(5, 0))->map(fn ($i) => now()->subMonths($i)->format('Y-m'));
         $windowStart = now()->subMonths(5)->startOfMonth();
@@ -55,6 +56,12 @@ class DashboardController extends Controller
             'labels' => $months->map(fn ($m) => Carbon::createFromFormat('Y-m', $m)->format('M Y'))->values()->all(),
             'lost' => $months->map(fn ($m) => $lostByMonth[$m] ?? 0)->values()->all(),
             'found' => $months->map(fn ($m) => $foundByMonth[$m] ?? 0)->values()->all(),
+            // Same definition as everywhere else: found items actually handed back.
+            'recovery' => $months->map(function ($m) use ($summary) {
+                $start = Carbon::createFromFormat('Y-m', $m)->startOfMonth();
+
+                return $summary->recoveryRate($start, $start->copy()->endOfMonth());
+            })->values()->all(),
         ];
     }
 }

@@ -107,6 +107,25 @@
                     </form>
                 </div>
             </div>
+
+            <div class="card mt-4 border-danger">
+                <div class="card-body">
+                    <h2 class="lm-section-title mb-2 text-danger"><i class="bi bi-trash"></i> Delete my account</h2>
+                    <p class="small text-muted">
+                        Permanently deletes your account, reports, claims, messages, and photos. This can't be undone.
+                        See the <a href="{{ route('privacy') }}">privacy notice</a>.
+                    </p>
+                    <form method="POST" action="{{ route('profile.destroy') }}"
+                          onsubmit="return confirm('Permanently delete your account and all your data? This cannot be undone.');">
+                        @csrf
+                        @method('DELETE')
+                        <x-input-label for="delete_password" value="Type your password to confirm" />
+                        <input id="delete_password" type="password" name="delete_password" class="form-control mb-2" autocomplete="current-password" required>
+                        <x-input-error :messages="$errors->get('delete_password')" />
+                        <button type="submit" class="btn btn-outline-danger w-100"><i class="bi bi-trash"></i> Delete my account</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 

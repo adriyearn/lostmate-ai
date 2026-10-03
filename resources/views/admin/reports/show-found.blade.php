@@ -61,6 +61,7 @@
 
             <div class="d-flex gap-2 flex-wrap">
                 <a href="{{ route('found-items.show', $foundItem) }}" class="btn btn-outline-secondary">View Public Page</a>
+                <a href="{{ route('admin.office.tag', $foundItem) }}" class="btn btn-outline-secondary"><i class="bi bi-qr-code"></i> Print claim tag</a>
 
                 @if (! $foundItem->isAtOffice() && ! in_array($foundItem->status->value, ['returned', 'closed'], true))
                     <form method="POST" action="{{ route('admin.office.receive', $foundItem) }}"
