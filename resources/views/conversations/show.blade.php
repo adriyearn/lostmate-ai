@@ -2,9 +2,9 @@
     <x-slot name="header">
         <div class="d-flex justify-content-between align-items-center gap-3">
             <div class="d-flex align-items-center gap-3">
-                <x-avatar :user="$otherUser" size="lg" />
+                <a href="{{ route('users.show', $otherUser) }}" title="View profile"><x-avatar :user="$otherUser" size="lg" /></a>
                 <div>
-                    <h1 class="h4 mb-0">{{ $otherUser->name }}</h1>
+                    <h1 class="h4 mb-0"><a href="{{ route('users.show', $otherUser) }}" class="text-dark text-decoration-none">{{ $otherUser->name }}</a></h1>
                     @if ($conversation->lostItem || $conversation->foundItem)
                         <p class="small text-muted mb-0">
                             About:

@@ -82,13 +82,13 @@
 
                     <hr class="my-4">
 
-                    <div class="d-flex align-items-center gap-3">
+                    <a href="{{ route('users.show', $foundItem->user) }}" class="d-flex align-items-center gap-3 text-decoration-none" title="View profile">
                         <x-avatar :user="$foundItem->user" size="lg" />
                         <div>
                             <div class="small text-muted">Found by</div>
-                            <div class="fw-semibold text-dark">{{ $foundItem->user->name }}</div>
+                            <div class="fw-semibold text-dark">{{ $foundItem->user->name }} <i class="bi bi-chevron-right small text-muted"></i></div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </div>
 

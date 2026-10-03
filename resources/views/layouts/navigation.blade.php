@@ -155,7 +155,8 @@
                                 <div class="text-muted" style="font-size: 0.75rem;">{{ auth()->user()->role->label() }}</div>
                             </li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="bi bi-person"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="{{ route('users.show', auth()->user()) }}"><i class="bi bi-person-badge"></i> View my profile</a></li>
+                            <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="bi bi-person"></i> Edit profile</a></li>
                             <li><a class="dropdown-item" href="{{ route('notifications.index') }}"><i class="bi bi-bell"></i> Notifications</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
