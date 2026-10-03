@@ -99,6 +99,9 @@ becomes returned.
   Users communicate through in-app messaging.
 - Image uploads: jpg, jpeg, png, webp only; max 5 MB each; max 3 per item.
   Store with Laravel's public disk and generated filenames.
+  Exception: when CLOUDINARY_URL is set (Heroku erases local files),
+  photos go to Cloudinary instead. All photo saving/URLs/deleting goes
+  through app/Services/PhotoStorage.php - never use asset('storage/...').
 - Deactivated users (is_active = false) cannot log in.
 - Admin routes are protected by an admin middleware.
 - Log every admin action to admin_logs.
