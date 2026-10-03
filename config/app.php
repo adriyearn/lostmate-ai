@@ -65,7 +65,9 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    // Philippine time (UTC+8), so message times, "today", and the daily
+    // auto-close all match the school's clock. Override with APP_TIMEZONE.
+    'timezone' => env('APP_TIMEZONE', 'Asia/Manila'),
 
     /*
     |--------------------------------------------------------------------------
