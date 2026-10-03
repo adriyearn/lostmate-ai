@@ -46,7 +46,9 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
-            'url' => env('DB_URL'),
+            // On Heroku, the JawsDB MySQL add-on provides the whole connection
+            // (host, user, password, database) as one JAWSDB_URL setting.
+            'url' => env('DB_URL', env('JAWSDB_URL')),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'laravel'),
