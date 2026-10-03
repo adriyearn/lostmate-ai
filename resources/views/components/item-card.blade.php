@@ -17,7 +17,7 @@
         <span class="lm-eyelet"></span>
 
         @if ($thumbnail)
-            <img src="{{ asset('storage/'.$thumbnail->path) }}" class="lm-thumb" alt="{{ $item->item_name }}" loading="lazy">
+            <img src="{{ $thumbnail->url }}" class="lm-thumb" alt="{{ $item->item_name }}" loading="lazy">
         @else
             <div class="lm-thumb-empty">
                 <i class="bi {{ $isLost ? 'bi-question-diamond' : 'bi-box-seam' }}"></i>

@@ -5,11 +5,12 @@ namespace App\Services;
 use App\Models\ItemImage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 
 class ItemImageService
 {
     public const MAX_IMAGES = 3;
+
+    public function __construct(protected PhotoStorage $photos) {}
 
     /**
      * Store the given uploaded files against an imageable model (LostItem or FoundItem).
@@ -19,7 +20,7 @@ class ItemImageService
     public function store(Model $imageable, array $files): void
     {
         foreach ($files as $file) {
-            $path = $file->store('item-images', 'public');
+            $path = $this->photos->store($file, 'item-images');
 
             $imageable->images()->create([
                 'path' => $path,
@@ -30,7 +31,7 @@ class ItemImageService
 
     public function delete(ItemImage $image): void
     {
-        Storage::disk('public')->delete($image->path);
+        $this->photos->delete($image->path);
         $image->delete();
     }
 }

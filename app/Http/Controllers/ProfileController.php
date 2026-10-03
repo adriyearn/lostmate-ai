@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\PhotoStorage;
 use App\Http\Requests\UpdateProfileRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -21,11 +21,9 @@ class ProfileController extends Controller
         $profile->fill($request->safe()->except('avatar'));
 
         if ($request->hasFile('avatar')) {
-            if ($profile->avatar_path) {
-                Storage::disk('public')->delete($profile->avatar_path);
-            }
-
-            $profile->avatar_path = $request->file('avatar')->store('avatars', 'public');
+            $photos = app(PhotoStorage::class);
+            $photos->delete($profile->avatar_path);
+            $profile->avatar_path = $photos->store($request->file('avatar'), 'avatars');
         }
 
         $profile->save();

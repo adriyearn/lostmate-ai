@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\ClaimStatus;
+use App\Services\PhotoStorage;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -48,6 +50,12 @@ class Claim extends Model
 
         // Turn the first 8 hex characters into a number, keep the last 6 digits.
         return str_pad((string) (hexdec(substr($hash, 0, 8)) % 1000000), 6, '0', STR_PAD_LEFT);
+    }
+
+    /** Web address of the claimant's proof photo, or null. */
+    protected function proofImageUrl(): Attribute
+    {
+        return Attribute::get(fn () => app(PhotoStorage::class)->url($this->proof_image_path));
     }
 
     public function foundItem(): BelongsTo

@@ -69,7 +69,7 @@
         <div class="d-flex flex-wrap gap-3 mt-1">
             @foreach ($lostItem->images as $image)
                 <div class="text-center">
-                    <img src="{{ asset('storage/'.$image->path) }}" alt="Photo" class="rounded mb-1" style="width: 100px; height: 100px; object-fit: cover;">
+                    <img src="{{ $image->url }}" alt="Photo" class="rounded mb-1" style="width: 100px; height: 100px; object-fit: cover;">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="remove_images[]" value="{{ $image->id }}" id="remove_image_{{ $image->id }}">
                         <label class="form-check-label small" for="remove_image_{{ $image->id }}">Remove</label>

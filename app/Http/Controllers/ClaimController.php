@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\PhotoStorage;
 use App\Enums\ItemStatus;
 use App\Exceptions\InvalidStatusTransitionException;
 use App\Http\Requests\ApproveClaimRequest;
@@ -45,7 +46,7 @@ class ClaimController extends Controller
     public function store(StoreClaimRequest $request, FoundItem $foundItem): RedirectResponse
     {
         $proofImagePath = $request->hasFile('proof_image')
-            ? $request->file('proof_image')->store('claim-proofs', 'public')
+            ? app(PhotoStorage::class)->store($request->file('proof_image'), 'claim-proofs')
             : null;
 
         try {

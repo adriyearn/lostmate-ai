@@ -29,7 +29,7 @@
                         <div class="carousel-inner" style="background: var(--lm-gradient-soft);">
                             @foreach ($foundItem->images as $image)
                                 <div class="carousel-item @if ($loop->first) active @endif">
-                                    <img src="{{ asset('storage/'.$image->path) }}" class="d-block w-100" alt="{{ $foundItem->item_name }}" style="height: 420px; object-fit: contain;">
+                                    <img src="{{ $image->url }}" class="d-block w-100" alt="{{ $foundItem->item_name }}" style="height: 420px; object-fit: contain;">
                                 </div>
                             @endforeach
                         </div>

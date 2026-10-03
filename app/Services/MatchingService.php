@@ -12,7 +12,6 @@ use App\Notifications\NewPossibleMatch;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 
 class MatchingService
@@ -286,22 +285,21 @@ class MatchingService
     }
 
     /**
-     * The report's first photo as a base64 "data:" URL, read from the public
-     * disk. Returns null if there's no photo, the file is missing, or it's
-     * too large - matching then simply uses the text for that report.
+     * The report's first photo as a base64 "data:" URL (works the same for
+     * local files and Cloudinary). Returns null if there's no photo, it
+     * can't be read, or it's too large - matching then simply uses the text
+     * for that report.
      */
     protected function photoDataUrl(LostItem|FoundItem $item): ?string
     {
         $image = $item->images->first();
-        $disk = Storage::disk('public');
+        $photo = $image ? app(PhotoStorage::class)->read($image->path, config('matching.max_photo_bytes')) : null;
 
-        if (! $image || ! $disk->exists($image->path) || $disk->size($image->path) > config('matching.max_photo_bytes')) {
+        if (! $photo) {
             return null;
         }
 
-        $mime = $disk->mimeType($image->path) ?: 'image/jpeg';
-
-        return 'data:'.$mime.';base64,'.base64_encode($disk->get($image->path));
+        return 'data:'.$photo['mime'].';base64,'.base64_encode($photo['bytes']);
     }
 
     protected function buildPrompt(LostItem|FoundItem $item, Collection $candidates): string

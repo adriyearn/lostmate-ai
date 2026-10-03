@@ -43,4 +43,11 @@ return [
         'base_url' => env('OPENAI_BASE_URL', 'https://api.openai.com/v1'),
     ],
 
+    // Photo hosting for hosts that erase local files (e.g. Heroku).
+    // Format: cloudinary://API_KEY:API_SECRET@CLOUD_NAME. Leave empty to
+    // keep photos in storage/app/public. See app/Services/PhotoStorage.php.
+    'cloudinary' => [
+        'url' => env('CLOUDINARY_URL'),
+    ],
+
 ];

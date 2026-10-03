@@ -27,7 +27,7 @@
                     <p class="mb-2"><strong>Claimant's identifying details:</strong><br>{{ $claim->identifying_details }}</p>
 
                     @if ($claim->proof_image_path)
-                        <img src="{{ asset('storage/'.$claim->proof_image_path) }}" alt="Proof" class="rounded mb-2" style="max-width: 200px;">
+                        <img src="{{ $claim->proof_image_url }}" alt="Proof" class="rounded mb-2" style="max-width: 200px;">
                     @endif
 
                     @if ($claim->lostItem)

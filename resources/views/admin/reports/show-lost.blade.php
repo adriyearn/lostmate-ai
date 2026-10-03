@@ -11,7 +11,7 @@
             @if ($lostItem->images->isNotEmpty())
                 <div class="d-flex flex-wrap gap-2 mb-3">
                     @foreach ($lostItem->images as $image)
-                        <img src="{{ asset('storage/'.$image->path) }}" class="rounded" style="width: 150px; height: 150px; object-fit: cover;">
+                        <img src="{{ $image->url }}" alt="Photo of {{ $lostItem->item_name }}" class="rounded" style="width: 150px; height: 150px; object-fit: cover;">
                     @endforeach
                 </div>
             @endif

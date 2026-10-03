@@ -2,7 +2,7 @@
 
 @php
     // Uploaded profile photo if there is one, otherwise the initials circle.
-    $path = $user->profile?->avatar_path;
+    $url = $user->profile?->avatar_url;
     $sizeClass = [
         'sm' => 'lm-avatar-sm',
         'md' => '',
@@ -11,8 +11,8 @@
     ][$size] ?? '';
 @endphp
 
-@if ($path)
-    <img src="{{ asset('storage/'.$path) }}" alt="{{ $user->name }}"
+@if ($url)
+    <img src="{{ $url }}" alt="{{ $user->name }}"
          {{ $attributes->merge(['class' => trim("lm-avatar lm-avatar-img {$sizeClass}")]) }}>
 @else
     <span {{ $attributes->merge(['class' => trim("lm-avatar {$sizeClass}")]) }} title="{{ $user->name }}">{{ $user->initials() }}</span>
