@@ -26,7 +26,7 @@ class UpdateLostItemRequest extends FormRequest
             'description' => ['required', 'string'],
             'location_lost' => ['required', 'string', 'max:255'],
             'date_lost' => ['required', 'date', 'before_or_equal:today'],
-            'time_lost' => ['nullable', 'date_format:H:i'],
+            'time_lost' => ['nullable', 'date_format:H:i,H:i:s'],
             'images' => ['nullable', 'array', 'max:'.$remainingSlots],
             'images.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'remove_images' => ['nullable', 'array'],

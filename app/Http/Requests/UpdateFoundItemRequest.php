@@ -27,7 +27,7 @@ class UpdateFoundItemRequest extends FormRequest
             'hidden_details' => ['nullable', 'string'],
             'location_found' => ['required', 'string', 'max:255'],
             'date_found' => ['required', 'date', 'before_or_equal:today'],
-            'time_found' => ['nullable', 'date_format:H:i'],
+            'time_found' => ['nullable', 'date_format:H:i,H:i:s'],
             'current_location' => ['nullable', 'string', 'max:255'],
             'images' => ['nullable', 'array', 'max:'.$remainingSlots],
             'images.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],

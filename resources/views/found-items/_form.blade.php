@@ -2,6 +2,13 @@
     $foundItem ??= null;
 @endphp
 
+{{-- On phones the field errors can be far below, so say it at the top too. --}}
+@if ($errors->any())
+    <div class="alert alert-danger small" role="alert">
+        <i class="bi bi-exclamation-triangle"></i> Your report wasn't saved yet. Please fix the field(s) marked in red below.
+    </div>
+@endif
+
 <div class="row">
     <div class="col-sm-6 mb-3">
         <x-input-label for="category_id" value="Category" />
@@ -69,7 +76,7 @@
 
     <div class="col-sm-2 mb-3">
         <x-input-label for="time_found" value="Time (optional)" />
-        <x-text-input id="time_found" type="time" name="time_found" :value="old('time_found', $foundItem?->time_found)" />
+        <x-text-input id="time_found" type="time" name="time_found" :value="old('time_found', $foundItem?->time_found ? substr($foundItem->time_found, 0, 5) : null)" />
         <x-input-error :messages="$errors->get('time_found')" />
     </div>
 

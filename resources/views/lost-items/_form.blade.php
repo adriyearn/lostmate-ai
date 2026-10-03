@@ -2,6 +2,13 @@
     $lostItem ??= null;
 @endphp
 
+{{-- On phones the field errors can be far below, so say it at the top too. --}}
+@if ($errors->any())
+    <div class="alert alert-danger small" role="alert">
+        <i class="bi bi-exclamation-triangle"></i> Your report wasn't saved yet. Please fix the field(s) marked in red below.
+    </div>
+@endif
+
 <div class="row">
     <div class="col-sm-6 mb-3">
         <x-input-label for="category_id" value="Category" />
@@ -58,7 +65,7 @@
 
     <div class="col-sm-3 mb-3">
         <x-input-label for="time_lost" value="Time Lost (optional)" />
-        <x-text-input id="time_lost" type="time" name="time_lost" :value="old('time_lost', $lostItem?->time_lost)" />
+        <x-text-input id="time_lost" type="time" name="time_lost" :value="old('time_lost', $lostItem?->time_lost ? substr($lostItem->time_lost, 0, 5) : null)" />
         <x-input-error :messages="$errors->get('time_lost')" />
     </div>
 </div>
